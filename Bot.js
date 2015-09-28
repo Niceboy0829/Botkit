@@ -11,6 +11,8 @@ function Bot(configuration) {
       config: {}, // this will hold the configuration
       tasks: [],
       memory: {}, // this will hold instance variables
+      taskCount: 0,
+      convoCount: 0,
   };
 
   bot.utterances = {
@@ -24,6 +26,7 @@ function Bot(configuration) {
     this.sent = [];
     this.transcript = [];
 
+    this.events = {};
 
     this.topics = {};
     this.topic = null;
@@ -34,10 +37,14 @@ function Bot(configuration) {
     this.handler = null;
     this.responses = {};
     this.capture_options = {};
+    this.startTime = new Date();
+    this.lastActive = new Date();
 
     this.handle = function(message) {
+
+      this.lastActive = new Date();
       this.transcript.push(message);
-      bot.log('HANDLING MESSAGE IN CONVO',message);
+      bot.debug('HANDLING MESSAGE IN CONVO',message);
       // do other stuff like call custom callbacks
       if (this.handler) {
 
@@ -109,18 +116,51 @@ function Bot(configuration) {
     }
 
     this.isActive = function() {
-      return this.status=='active';
+      // active includes both ACTIVE and ENDING
+      // in order to allow the timeout end scripts to play out
+      return (this.status=='active' || this.status =='ending');
+    }
+
+    this.deactivate = function() {
+      this.status='inactive';
     }
 
     this.say = function(message) {
       this.addMessage(message);
     }
 
+
+    this.on = function(event,cb) {
+      bot.debug('Setting up a handler for',event);
+      var events = event.split(/\,/g);
+      for (var e in events) {
+        if (!this.events[events[e]]) {
+          this.events[events[e]]=[];
+        }
+        this.events[events[e]].push(cb);
+      }
+      return this;
+    }
+
+    this.trigger = function(event,data) {
+      if (this.events[event]) {
+        for (var e = 0; e < this.events[event].length; e++) {
+          var res = this.events[event][e].apply(this,data);
+          if (res===false) {
+            return;
+          }
+        }
+      } else {
+        bot.debug('No handler for ',event);
+      }
+    }
+
+
     this.repeat = function() {
       if (this.sent.length) {
         this.say(this.sent[this.sent.length-1]);
       } else {
-        console.log('TRIED TO REPEAT, NOTHING TO SAY');
+//        console.log('TRIED TO REPEAT, NOTHING TO SAY');
       }
     }
 
@@ -135,14 +175,13 @@ function Bot(configuration) {
 
         this.messages.unshift(last);
       } else {
-        console.log('TRIED TO REPEAT, NOTHING TO SAY');
+        //console.log('TRIED TO REPEAT, NOTHING TO SAY');
       }
     }
 
     this.addQuestion = function(message,cb,capture_options,topic) {
 
 
-        console.log('setting up an ask',message,cb,capture_options);
         if (typeof(message)=='string') {
           message = {
             text: message,
@@ -173,7 +212,7 @@ function Bot(configuration) {
       if (typeof(message)=='string') {
         message = {
           text: message,
-          channel: this.source_message.channel
+          channel: this.source_message.channel,
         }
       } else {
         message.channel = this.source_message.channel;
@@ -251,20 +290,48 @@ function Bot(configuration) {
     this.replaceTokens = function(text) {
 
       var vars = {
-        identity: this.task.bot.identity,
+        identity: this.task.connection.identity,
         responses: this.extractResponses(),
-        origin: this.source_message
+        origin: this.task.source_message
       }
 
       return mustache.render(text,vars);
 
     }
 
+    this.stop = function(status) {
+
+      this.handler = null;
+      this.messages = [];
+      this.status=status||'stopped';
+      bot.debug('Conversation is over!');
+      this.task.conversationEnded(this);
+
+    }
+
     this.tick = function() {
+      var now = new Date();
+
       if (this.isActive()) {
         if (this.handler) {
           // check timeout!
+          // how long since task started?
+          var duration = (now.getTime() - this.task.startTime.getTime());
+          // how long since last active?
+          var lastActive = (now.getTime() - this.lastActive.getTime());
 
+          if (this.task.timeLimit && // has a timelimit
+              (duration > this.task.timeLimit) && // timelimit is up
+              (lastActive > (10*1000)) // nobody has typed for 60 seconds at least
+            ) {
+
+              if (this.topics['timeout']) {
+                this.status='ending';
+                this.changeTopic('timeout');
+              } else {
+                this.stop('timeout');
+              }
+          }
           // otherwise do nothing
         } else {
           if (this.messages.length) {
@@ -281,8 +348,13 @@ function Bot(configuration) {
 
             this.sent.push(message);
             this.transcript.push(message);
+            this.lastActive = new Date();
+
             if (message.text) {
               message.text = this.replaceTokens(message.text);
+              if (this.messages.length && !message.handler) {
+                message.continue_typing = true;
+              }
               this.task.bot.say(this.task.connection,message,this);
             }
             if (message.action) {
@@ -290,6 +362,10 @@ function Bot(configuration) {
                   this.repeat();
                 } else if (message.action=='wait') {
                     this.silentRepeat();
+                } else if (message.action=='stop') {
+                    this.stop();
+                } else if (message.action=='timeout') {
+                      this.stop('timeout');
                 } else if (this.topics[message.action]) {
                   this.changeTopic(message.action);
                 }
@@ -317,6 +393,7 @@ function Bot(configuration) {
     this.events = {};
     this.source_message = message;
     this.status = 'active';
+    this.startTime = new Date();
 
     this.isActive = function() {
       return this.status=='active';
@@ -324,8 +401,11 @@ function Bot(configuration) {
 
     this.startConversation = function(message) {
 
-      console.log('Start conversation with ',message);
       var convo = new Conversation(this,message);
+      convo.id = bot.convoCount++;
+
+      bot.log('>   [Start] ',convo.id,' Conversation with ',message.user,'in',message.channel);
+
       convo.activate();
       this.convos.push(convo);
       this.trigger('conversationStarted',[convo]);
@@ -334,8 +414,9 @@ function Bot(configuration) {
 
     this.conversationEnded = function(convo) {
 
+      bot.log('>   [End] ',convo.id,' Conversation with ',convo.source_message.user,'in',convo.source_message.channel);
       this.trigger('conversationEnded',[convo]);
-
+      convo.trigger('end',[convo]);
       var actives = 0;
       for (var c = 0; c < this.convos.length; c++) {
         if (this.convos[c].isActive()) {
@@ -350,7 +431,8 @@ function Bot(configuration) {
 
     this.taskEnded = function() {
 
-      bot.debug('THIS TASK HAS ENDED!');
+      bot.log('[End] ',this.id,' Task for ',this.source_message.user,'in',this.source_message.channel);
+
       this.status='completed';
       this.trigger('end',[this]);
 
@@ -369,7 +451,6 @@ function Bot(configuration) {
     }
 
     this.trigger = function(event,data) {
-      console.log('TRIGGER: ' + event);
       if (this.events[event]) {
         for (var e = 0; e < this.events[event].length; e++) {
           var res = this.events[event][e].apply(this,data);
@@ -378,7 +459,7 @@ function Bot(configuration) {
           }
         }
       } else {
-        bot.debug('No handler for ',event,data);
+        bot.debug('No handler for ',event);
       }
     }
 
@@ -492,7 +573,6 @@ function Bot(configuration) {
       for (var e = 0; e < events.length; e++) {
         (function(keyword) {
           bot.on(events[e],function(connection,message) {
-            console.log('HEARS RESPONDER');
             if (message.text) {
               if (message.text.match(new RegExp(keyword,'i'))) {
                 bot.debug("I HEARD ",keyword);
@@ -500,7 +580,7 @@ function Bot(configuration) {
                 return false;
               }
             } else {
-              console.log('Ignoring message without text',message);
+              //console.log('Ignoring message without text',message);
             }
           });
         })(keyword);
@@ -529,20 +609,24 @@ function Bot(configuration) {
         }
       }
     } else {
-      bot.debug('No handler for ',event,data);
+      bot.debug('No handler for ',event);
     }
   }
 
-  bot.findConversation = function(message,cb) {
+  bot.findConversation = function(connection,message,cb) {
     bot.debug('DEFAULT FIND CONVO');
     cb(null);
   }
 
   bot.startTask = function(connection,message,cb) {
 
-    console.log('Start task with',message);
     var task = new Task(connection,message,this);
+
+    task.id = bot.taskCount++;
+    bot.log('[Start] ',task.id,' Task for ',message.user,'in',message.channel);
+
     var convo = task.startConversation(message);
+
     this.tasks.push(task);
 
     if (cb) {
@@ -557,7 +641,7 @@ function Bot(configuration) {
 
     bot.debug('RECEIVED MESSAGE');
 
-    bot.findConversation(message,function(convo) {
+    bot.findConversation(connection,message,function(convo) {
       if (convo) {
         convo.handle(message);
       } else {
@@ -572,7 +656,6 @@ function Bot(configuration) {
     }
     for (var t = bot.tasks.length-1; t >=0; t--) {
       if (!bot.tasks[t].isActive()) {
-        console.log('SPLICE OUT COMPLETED TASK');
           bot.tasks.splice(t,1);
       }
     }

@@ -62,7 +62,7 @@ function Slackbot(configuration) {
                   bot.debug('WEBHOOK SUCCESS',body);
                   if (cb) cb(null,body);
                 }
-            }).form(JSON.stringify(options));
+            }).form({payload: JSON.stringify(options)});
           }
         }
       },
@@ -282,6 +282,9 @@ function Slackbot(configuration) {
   // set up a web route that is a landing page
   bot.createHomepageEndpoint = function(webserver) {
 
+    bot.log('** Serving app landing page at : http://MY_HOST:' + configuration.port + '/');
+
+
     webserver.get('/',function(req,res) {
 
       res.send('Howdy!');
@@ -293,6 +296,9 @@ function Slackbot(configuration) {
 
   // set up a web route for receiving outgoing webhooks and/or slash commands
   bot.createWebhookEndpoints = function(webserver) {
+
+
+    bot.log('** Serving webhook endpoints for Slash commands and outgoing webhooks at: http://MY_HOST:' + configuration.port + '/slack/receive');
 
     webserver.post('/slack/receive',function(req,res) {
 
@@ -397,7 +403,7 @@ function Slackbot(configuration) {
     bot.webserver.use(express.static(__dirname + '/public'));
 
     var server = bot.webserver.listen(configuration.port, function () {
-      console.log('listening on port ' + configuration.port);
+      bot.log('** Starting webserver on port ' + configuration.port);
       cb(null,bot.webserver);
     });
 
@@ -409,6 +415,9 @@ function Slackbot(configuration) {
   // https://api.slack.com/docs/oauth
   bot.createOauthEndpoints = function(webserver) {
 
+    bot.log('** Serving login URL: http://MY_HOST:' + configuration.port + '/login');
+
+
     webserver.get('/login',function(req,res) {
 
         var url = 'https://slack.com/oauth/authorize';
@@ -417,6 +426,9 @@ function Slackbot(configuration) {
         res.redirect(url + "?client_id=" + configuration.clientId + "&scope=incoming-webhook&state=botkit")
 
     });
+
+
+    bot.log('** Serving oauth return endpoint: http://MY_HOST:' + configuration.port + '/oauth');
 
     webserver.get('/oauth',function(req,res) {
 
@@ -434,7 +446,6 @@ function Slackbot(configuration) {
         } else {
           res.send('ok! sending test');
 
-          console.log(auth);
 
           // temporarily use the token we got from the oauth
           configuration.token = auth.access_token;
@@ -484,7 +495,6 @@ function Slackbot(configuration) {
   // convenience method for creating a DM convo
   bot.startDM = function(task,user_id,cb) {
 
-    console.log('START A DM WITH',user_id);
     bot.useConnection(task.connection);
     bot.api.im.open({user:user_id},function(err,channel) {
       if (err) {
@@ -510,7 +520,6 @@ function Slackbot(configuration) {
   }
 
   bot.useConnection = function(connection) {
-    console.log('USING OCNFIG',connection);
     configuration.token = connection.team.token;
     configuration.incoming_webhook = connection.team.incoming_webhook;
   }
@@ -550,18 +559,19 @@ function Slackbot(configuration) {
     },cb);
   }
 
-  bot.findConversation = function(message,cb) {
-    bot.log('CUSTOM FIND CONVO',message.user,message.channel);
+  bot.findConversation = function(connection,message,cb) {
+    bot.debug('CUSTOM FIND CONVO',message.user,message.channel);
 
     if (message.type=='message' || message.type=='slash_command' || message.type=='outgoing_webhook') {
       for (var t = 0; t < bot.tasks.length; t++) {
         for (var c = 0; c < bot.tasks[t].convos.length; c++) {
           if (
             bot.tasks[t].convos[c].isActive()
+            && bot.tasks[t].connection.db_bot._id==connection.db_bot._id
             && bot.tasks[t].convos[c].source_message.user==message.user
             && bot.tasks[t].convos[c].source_message.channel==message.channel
           ) {
-            bot.log('FOUND EXISTING CONVO!');
+            bot.debug('FOUND EXISTING CONVO!');
             cb(bot.tasks[t].convos[c]);
             return;
           }
@@ -572,53 +582,72 @@ function Slackbot(configuration) {
 
   }
 
-  bot.startRTM = function(connection) {
+  bot.closeRTM = function(connection) {
+
+    connection.should_close = true;
+    connection.rtm.close();
+
+  }
+
+  bot.startRTM = function(connection,cb) {
 
     bot.useConnection(connection);
-    bot.api.rtm.start({},function(err,res) {
+    bot.api.rtm.start({
+      no_unreads: true,
+      simple_latest: true,
+    },function(err,res) {
 
       if (err) {
-        console.log(err);
-
+        if (cb) {
+          cb(err);
+        }
       } else {
+        connection.identity = res.self;
+        connection.team_info = res.team;
+        connection.should_close = false;
 
-      bot.identity = res.self;
-      //      bot.team = res.team;
+        // also available
+        // res.users
+        // res.channels
+        // res.groups
+        // res.ims
+        // res.bots
+        // these could be stored and cached for later use?
 
-      // also available
-      // res.users
-      // res.channels
-      // res.groups
-      // res.ims
-      // res.bots
-      // these could be stored and cached for later use?
+            bot.log(":::::::> I AM ", connection.identity.name);
 
-          bot.log(":::::::> I AM ", bot.identity.name);
+            bot.trigger('rtm_open',[connection]);
 
-           connection.rtm = new ws(res.url);
-           connection.msgcount = 1;
-           connection.rtm.on('message', function(data, flags) {
+             connection.rtm = new ws(res.url);
+             connection.msgcount = 1;
+             connection.rtm.on('message', function(data, flags) {
 
-             var message = JSON.parse(data);
-              bot.receiveMessage(connection,message);
-           });
+               var message = JSON.parse(data);
+                bot.receiveMessage(connection,message);
+             });
 
-           connection.rtm.on('close',function() {
+             connection.rtm.on('close',function() {
+               bot.trigger('rtm_close',[connection]);
+               if (!connection.should_close) {
+                 bot.startRTM(connection);
+               }
+             });
 
-             console.log('WEBSOCKET RECONECT');
-             bot.startRTM(connection);
-           });
+             if (cb) {
+               cb(null,connection);
+             }
 
-           if (connection.tickInterval) {
-             clearInterval(connection.tickInterval);
+
+            //  if (!botconnection.tickInterval) {
+            //    clearInterval(connection.tickInterval);
+            //  }
+
+            if (!bot.tickInterval) {
+              bot.tickInterval = setInterval(function() {
+               bot.tick();
+              },1000);
+            }
            }
-
-           console.log('Setting interval...');
-           connection.tickInterval = setInterval(function() {
-             bot.tick();
-           },1000);
-         }
-
      });
   }
 
@@ -628,17 +657,22 @@ function Slackbot(configuration) {
 
 
       bot.on('message_received',function(connection,message) {
+
+
+        if (message.ok!=undefined) {
+          // this is a confirmation of something we sent.
+          return false;
+        }
+
         bot.debug('DEFAULT SLACK MSG RECEIVED RESPONDER');
         //console.log(message);
         //console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         if ('message' == message.type) {
 
           // set up a couple of special cases based on subtype
-
-
           if (message.subtype && message.subtype=='channel_join') {
             // someone joined. maybe do something?
-            if (message.user==bot.identity.id) {
+            if (message.user==connection.identity.id) {
               bot.trigger('bot_channel_join',[connection,message]);
               return false;
             } else {
@@ -647,7 +681,7 @@ function Slackbot(configuration) {
             }
           } else if (message.subtype && message.subtype == 'group_join') {
             // someone joined. maybe do something?
-            if (message.user==bot.identity.id) {
+            if (message.user==connection.identity.id) {
               bot.trigger('bot_group_join',[connection,message]);
               return false;
             } else {
@@ -661,7 +695,7 @@ function Slackbot(configuration) {
 
           } else if (message.channel.match(/^D/)){
             // this is a direct message
-            if (message.user==bot.identity.id) {
+            if (message.user==connection.identity.id) {
               return false;
             }
 
@@ -671,7 +705,7 @@ function Slackbot(configuration) {
             }
 
             // remove direct mention so the handler doesn't have to deal with it
-            var direct_mention = new RegExp('^\<\@' + bot.identity.id + '\>','i');
+            var direct_mention = new RegExp('^\<\@' + connection.identity.id + '\>','i');
             message.text = message.text.replace(direct_mention,'').replace(/^\s+/,'').replace(/^\:/,'').replace(/^\s+/,'');
 
             message.event = 'direct_message';
@@ -680,7 +714,7 @@ function Slackbot(configuration) {
             return false;
 
           } else {
-            if (message.user==bot.identity.id) {
+            if (message.user==connection.identity.id) {
               return false;
             }
             if (!message.text) {
@@ -688,8 +722,8 @@ function Slackbot(configuration) {
               return false;
             }
 
-            var direct_mention = new RegExp('^\<\@' + bot.identity.id + '\>','i');
-            var mention = new RegExp('\<\@' + bot.identity.id + '\>','i');
+            var direct_mention = new RegExp('^\<\@' + connection.identity.id + '\>','i');
+            var mention = new RegExp('\<\@' + connection.identity.id + '\>','i');
 
             if (message.text.match(direct_mention)) {
               // this is a direct mention
