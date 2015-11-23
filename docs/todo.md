@@ -17,3 +17,6 @@ These items still need to be addressed!
 
 
 * What functions need to be overridden to handle the multi team stuff?
+
+
+* bot.say takes a convo paramter? why? huh?
