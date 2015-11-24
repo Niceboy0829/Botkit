@@ -1,7 +1,3 @@
 node_modules/
 teams/
 start.sh
-db/
-.DS_Store
-*/.DS_Store
-
