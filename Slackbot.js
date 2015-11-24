@@ -373,10 +373,10 @@ function Slackbot(configuration) {
         message.user = message.user_id;
         message.channel = message.channel_id;
 
-        bot.findTeamById(message.team_id,function(err,team) {
+        bot.findTeamById(message.team_id,function(err,connection) {
 
-          if (err || !team) {
-            bot.log('Received slash command, but could not load team');
+          if (err) {
+
           } else {
             message.type='slash_command';
             // HEY THERE
@@ -386,10 +386,7 @@ function Slackbot(configuration) {
             // to send an optional response.
 
             res.status(200);
-            var connection = {
-              team: team,
-              res: res,
-            }
+            connection.res = res;
             message._connection = connection;
 
             bot.receiveMessage(message);
@@ -410,16 +407,13 @@ function Slackbot(configuration) {
         message.user = message.user_id;
         message.channel = message.channel_id;
 
-        bot.findTeamById(message.team_id,function(err,team) {
+        bot.findTeamById(message.team_id,function(err,connection) {
 
-          if (err || !team) {
-            bot.log('Received outgoing webhook but could not load team');
+          if (err) {
+
           } else {
             message.type='outgoing_webhook';
-            var connection = {
-              team: team,
-              res: res,
-            }
+            connection.res = res;
             res.status(200);
 
             message._connection = connection;
@@ -443,21 +437,18 @@ function Slackbot(configuration) {
 
 
 
-  bot.saveTeam = function(team,cb) {
+  bot.saveTeam = function(connection) {
 
-
-    bot.storage.teams.save(team,cb);
-    //
-    // bot.log('WARNING: Using built in, insecure method for storing team info!');
-    // if (bot.config.path) {
-    //   if (fs.existsSync(bot.config.path+'/' + connection.team.id + '.json')) {
-    //     bot.trigger('update_team',[connection]);
-    //   } else {
-    //     bot.trigger('create_team',[connection]);
-    //   }
-    //   var json = JSON.stringify(connection.team);
-    //   json = fs.writeFileSync(bot.config.path+'/' + connection.team.id + '.json',json,'utf8');
-    // }
+    bot.log('WARNING: Using built in, insecure method for storing team info!');
+    if (bot.config.path) {
+      if (fs.existsSync(bot.config.path+'/' + connection.team.id + '.json')) {
+        bot.trigger('update_team',[connection]);
+      } else {
+        bot.trigger('create_team',[connection]);
+      }
+      var json = JSON.stringify(connection.team);
+      json = fs.writeFileSync(bot.config.path+'/' + connection.team.id + '.json',json,'utf8');
+    }
 
   }
 
@@ -465,7 +456,19 @@ function Slackbot(configuration) {
   // return an error!
   bot.findTeamById = function(id,cb) {
 
-    bot.storage.teams.find(id,cb);
+    bot.log('WARNING: Using built in, insecure method for storing team info!');
+
+    if (!bot.config.path) {
+      cb('Not configured to store team info');
+    } else {
+      if (fs.existsSync(bot.config.path+'/' + id + '.json')) {
+        json = fs.readFileSync(bot.config.path+'/' + id + '.json','utf8');
+        json = JSON.parse(json);
+        cb(null,{team: json});
+      } else {
+        cb('Not found');
+      }
+    }
 
   }
 
@@ -584,15 +587,9 @@ function Slackbot(configuration) {
 
             } else {
 
-              bot.findTeamById(identity.team_id,function(err,team) {
+              bot.findTeamById(identity.team_id,function(err,connection) {
 
-                // define the connection to this team
-                var connection = {};
-                if (team) {
-                  connection = {
-                    team: team
-                  }
-                } else {
+                if (!connection) {
                   connection = {
                     team: {
                       id: identity.team_id,
@@ -610,12 +607,7 @@ function Slackbot(configuration) {
                   bot.trigger('create_incoming_webhook',[connection,connection.team.incoming_webhook]);
                 }
 
-                bot.saveTeam(connection.team,function(err,id) {
-                  if (err) {
-                    bot.log('An error occurred while saving a team: ',err);
-                    bot.trigger('error',[err]);
-                  }
-                });
+                bot.saveTeam(connection);
               });
             }
           })
