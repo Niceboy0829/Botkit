@@ -108,22 +108,13 @@ while `bot.reply()` causes the bot to respond to a message it received.
 | Argument | Description
 |--- |---
 | message | Incoming message object
-| reply | _String_ or _Object_ Outgoing response
-| callback | _Optional_ Callback in the form function(err,response) { ... }
+| reply | _String_ Outgoing response
 
 ```
 bot.hears(['keyword','^pattern$'],['direct_message','direct_mention','mention','ambient'],function(message) {
 
   // do something to respond to message
   bot.reply(message,"Tell me more!");
-
-  // do something to respond with an object
-  bot.reply(message,{
-    text: "A more complex response",
-    username: "ReplyBot",
-    icon_emoji: ":dash:",
-  });
-
 
 });
 ```
@@ -135,7 +126,6 @@ bot.hears(['keyword','^pattern$'],['direct_message','direct_mention','mention','
 |--- |---
 | connection | Slack configuration in the form {token: some_valid_token}
 | message | Incoming message object in the form { text: "" channel: ""}
-| callback | _Optional_ Callback in the form function(err,response) { ... }
 
 Note: If your primary need is to spontaneously send messages rather than
 respond to incoming messages, you may want to use the [incoming webhooks]() feature rather than the real time API.
@@ -163,15 +153,7 @@ messages into a cohesive experience.
 | Argument | Description
 |---  |---
 | message   | incoming message to which the conversation is in response
-| callback  | a callback function in the form of  function(err,conversation) { ... }
-
-### bot.startPrivateConversation()
-
-| Argument | Description
-|---  |---
-| message   | incoming message to which the conversation is in response
-| callback  | a callback function in the form of  function(err,conversation) { ... }
-
+| callback  | a callback function in the form of  function(conversation) { ... }
 
 
 ### conversation.say()
@@ -186,7 +168,7 @@ Call convo.say() several times in a row to queue messages inside the conversatio
 bot.hears(['hello world'],['direct_message','direct_mention','mention','ambient'],function(message) {
 
   // start a conversation to handle this response.
-  bot.startConversation(message,function(err,convo) {
+  bot.startConversation(message,function(convo) {
 
     convo.say('Hello!');
     convo.say('Have a nice day!');
@@ -231,7 +213,7 @@ Botkit comes pre-built with several useful patterns which can be used with this 
 bot.hears(['question me'],['direct_message','direct_mention','mention','ambient'],function(message) {
 
   // start a conversation to handle this response.
-  bot.startConversation(message,function(err,convo) {
+  bot.startConversation(message,function(convo) {
 
     convo.ask('How are you?',function(response,convo) {
 
@@ -253,7 +235,7 @@ bot.hears(['question me'],['direct_message','direct_mention','mention','ambient'
 bot.hears(['question me'],['direct_message','direct_mention','mention','ambient'],function(message) {
 
   // start a conversation to handle this response.
-  bot.startConversation(message,function(err,convo) {
+  bot.startConversation(message,function(convo) {
 
     convo.ask('Shall we proceed Say YES, NO or DONE to quit.',[
       {
@@ -447,13 +429,7 @@ outgoing_webhook
 
 special responses
 ---
-
-bot.replyPublic()
-bot.replyPublicDelayed()
-
-bot.replyPrivate()
-bot.replyPrivateDelayed()
-
+you can respond immediately to these if you want...
 
 
 ## Real Time API
@@ -518,7 +494,7 @@ bot.setupWebserver(process.env.port,function(err,webserver) {
   // set up web endpoints for oauth, receiving webhooks, etc.
   bot
     .createHomepageEndpoint(bot.webserver)
-    .createOauthEndpoints(bot.webserver,function(err,req,res) { ... })
+    .createOauthEndpoints(bot.webserver)
     .createWebhookEndpoints(bot.webserver);
 
 });
