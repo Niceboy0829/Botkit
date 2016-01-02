@@ -62,7 +62,8 @@ if (!process.env.token) {
 }
 
 var controller = Botkit.slackbot({
- debug: false
+ debug: false,
+ log: false
 });
 
 controller.spawn({
@@ -74,11 +75,11 @@ controller.spawn({
 });
 
 
-controller.hears(['hello','hi'],['direct_message','direct_mention','mention'],function(bot,message) {
+controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function(bot,message) {
     bot.reply(message,"Hello.");
 })
 
-controller.hears(['attach'],['direct_message','direct_mention'],function(bot,message) {
+controller.hears(['attach'],'direct_message,direct_mention',function(bot,message) {
 
   var attachments = [];
   var attachment = {
@@ -115,7 +116,7 @@ controller.hears(['attach'],['direct_message','direct_mention'],function(bot,mes
   });
 });
 
-controller.hears(['dm me'],['direct_message','direct_mention'],function(bot,message) {
+controller.hears(['dm me'],'direct_message,direct_mention',function(bot,message) {
   bot.startConversation(message,function(err,convo) {
     convo.say('Heard ya');
   });
