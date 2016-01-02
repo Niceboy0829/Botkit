@@ -104,7 +104,6 @@ var Botkit = require('botkit');
 var controller = Botkit.slackbot({
   debug: false
   //include "log: false" to disable logging
-  //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
 });
 
 // connect the bot to a stream of messages
@@ -113,7 +112,7 @@ controller.spawn({
 }).startRTM()
 
 // give the bot something to listen for.
-controller.hears('hello','direct_message,direct_mention,mention',function(bot,message) {
+controller.hears('hello',['direct_message','direct_mention','mention'],function(bot,message) {
 
   bot.reply(message,'Hello yourself.');
 
@@ -654,7 +653,7 @@ respond to incoming messages, you may want to use [Slack's incoming webhooks fea
 bot.say(
   {
     text: 'my message text',
-    channel: 'G0GRHT83Z'
+    channel: 'C0H338YH4'
   }
 );
 ```
@@ -933,33 +932,6 @@ var controller = Botkit.slackbot({
 })
 ```
 
-### Writing your own logging module
-
-By default, your bot will log to the standard JavaScript `console` object
-available in Node.js. This will synchronously print logging messages to stdout
-of the running process.
-
-There may be some cases, such as remote debugging or rotating of large logs,
-where you may want a more sophisticated logging solution. You can write your
-own logging module that uses a third-party tool, like
-[winston](https://github.com/winstonjs/winston) or
-[Bristol](https://github.com/TomFrost/Bristol). Just create an object with a
-`log` method. That method should take a severity level (such as `'error'` or 
-`'debug'`) as its first argument, and then any number of other arguments that
-will be logged as messages. (Both Winston and Bristol create objects of this
-description; it's a common interface.)
-
-Then, use it when you create your bot:
-```javascript
-var controller = Botkit.slackbot({
-  logger: new winston.Logger({
-    transports: [
-      new (winston.transports.Console)(),
-      new (winston.transports.File)({ filename: './bot.log' })
-    ]
-  })
-});
-```
 
 ## Use the Slack Button
 
@@ -1078,3 +1050,6 @@ bot.identifyBot(function(err,identity) {
 | create_user |
 | update_user |
 | oauth_error |
+
+# Chat with us at dev4slack.slack.com
+You can get an invite here: http://dev4slack.xoxco.com/.
