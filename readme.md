@@ -1,9 +1,5 @@
 # [Botkit](http://howdy.ai/botkit) - Building Blocks for Building Bots
 
-[![npm](https://img.shields.io/npm/v/botkit.svg)](https://www.npmjs.com/package/botkit)
-[![David](https://img.shields.io/david/howdyai/botkit.svg)](https://david-dm.org/howdyai/botkit)
-[![npm](https://img.shields.io/npm/l/botkit.svg)](https://spdx.org/licenses/MIT)
-
 Botkit designed to ease the process of designing and running useful, creative or just plain weird bots (and other types of applications) that live inside [Slack](http://slack.com)!
 
 It provides a semantic interface to sending and receiving messages
@@ -371,7 +367,7 @@ on the type and number of messages that will be sent.
 
 Single message replies to incoming commands can be sent using the `bot.reply()` function.
 
-Multi-message replies, particularly those that present questions for the end user to respond to,
+Multi-message replies, particulary those that present questions for the end user to respond to,
 can be sent using the `bot.startConversation()` function and the related conversation sub-functions.
 
 Bots can originate messages - that is, send a message based on some internal logic or external stimulus -
@@ -658,7 +654,7 @@ askSize = function(response, convo) {
 }
 askWhereDeliver = function(response, convo) {
   convo.ask('So where do you want it delivered?', function(response, convo) {
-    convo.say('Ok! Good bye.');
+    convo.say('Ok! Good by.');
     convo.next();
   });
 }
