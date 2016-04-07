@@ -44,7 +44,7 @@ This bot demonstrates a multi-stage conversation
 
 # EXTEND THE BOT:
 
-  Botkit has many features for building cool and useful bots!
+  Botkit is has many features for building cool and useful bots!
 
   Read all about it here:
 
