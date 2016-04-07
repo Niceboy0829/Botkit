@@ -79,14 +79,20 @@ var controller = Botkit.facebookbot({
 });
 
 var bot = controller.spawn({
+//    token: process.env.token
 });
 
-controller.setupWebserver(4000, function(err,webserver) {
+controller.setupWebserver(3002, function(err,webserver) {
     controller.createWebhookEndpoints(webserver, bot, function() {
+
         console.log('ONLINE!');
     });
 });
 
+
+controller.on('message_received', function(bot, message) {
+	console.log('RECEIVED ',message);
+});
 
 controller.hears(['hello','hi'],'message_received',function(bot, message) {
 
@@ -127,7 +133,7 @@ controller.hears(['structured'],'message_received',function(bot, message) {
                        {
                          'type':'postback',
                          'title':'Bookmark Item',
-                         'payload':'White T-Shirt'
+                         'payload':'USER_DEFINED_PAYLOAD_FOR_ITEM100'
                        }
                      ]
                    },
@@ -149,7 +155,7 @@ controller.hears(['structured'],'message_received',function(bot, message) {
                        {
                          'type':'postback',
                          'title':'Bookmark Item',
-                         'payload':'Grey T-Shirt'
+                         'payload':'USER_DEFINED_PAYLOAD_FOR_ITEM101'
                        }
                      ]
                    }
@@ -162,11 +168,12 @@ controller.hears(['structured'],'message_received',function(bot, message) {
 
 controller.on('facebook_postback', function(bot, message) {
 
-    bot.reply(message, 'Great Choice!!!! (' + message.payload + ')');
+    bot.reply(message, message.payload);
+
 
 });
 
-controller.hears(['call me (.*)', 'my name is (.*)'], 'message_received', function(bot, message) {
+controller.hears(['call me (.*)', 'my name is (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
     var name = message.match[1];
     controller.storage.users.get(message.user, function(err, user) {
         if (!user) {
@@ -181,7 +188,8 @@ controller.hears(['call me (.*)', 'my name is (.*)'], 'message_received', functi
     });
 });
 
-controller.hears(['what is my name', 'who am i'], 'message_received', function(bot, message) {
+controller.hears(['what is my name', 'who am i'], 'direct_message,direct_mention,mention', function(bot, message) {
+
     controller.storage.users.get(message.user, function(err, user) {
         if (user && user.name) {
             bot.reply(message, 'Your name is ' + user.name);
@@ -286,15 +294,6 @@ controller.hears(['uptime','identify yourself','who are you','what is your name'
              '>. I have been running for ' + uptime + ' on ' + hostname + '.');
 
     });
-
-
-
-    controller.on('message_received', function(bot, message) {
-    	console.log('RECEIVED ',message);
-        bot.reply(message, 'Try: `what is my name` or `structured` or `call me captain`');
-        return false;
-    });
-
 
 function formatUptime(uptime) {
     var unit = 'second';
