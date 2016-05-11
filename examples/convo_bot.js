@@ -38,7 +38,7 @@ This bot demonstrates a multi-stage conversation
   
   Say where you want it delivered.
   
-  The bot will reply "Ok! Goodbye."
+  The bot will reply "Ok! Good by."
   
   ...and will refrain from billing your card because this is just a demo :P
 
@@ -91,7 +91,7 @@ askSize = function(response, convo) {
 }
 askWhereDeliver = function(response, convo) { 
   convo.ask("So where do you want it delivered?", function(response, convo) {
-    convo.say("Ok! Goodbye.");
+    convo.say("Ok! Good by.");
     convo.next();
   });
 }
