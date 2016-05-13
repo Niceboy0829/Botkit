@@ -4,7 +4,7 @@
 [![David](https://img.shields.io/david/howdyai/botkit.svg)](https://david-dm.org/howdyai/botkit)
 [![npm](https://img.shields.io/npm/l/botkit.svg)](https://spdx.org/licenses/MIT)
 
-Botkit designed to ease the process of designing and running useful, creative bots that live inside [Slack](http://slack.com), [Facebook Messenger](http://facebook.com) and other messaging platforms.
+Botkit is designed to ease the process of designing and running useful, creative bots that live inside [Slack](http://slack.com), [Facebook Messenger](http://facebook.com) and other messaging platforms.
 
 It provides a semantic interface to sending and receiving messages so that developers can focus on creating novel applications and experiences instead of dealing with API endpoints.
 
@@ -164,7 +164,7 @@ Facebook messages are fairly straightforward. However, because Facebook supports
 
 Botkit bots receive messages through a system of specialized event handlers. Handlers can be set up to respond to specific types of messages, or to messages that match a given keyword or pattern.
 
-These message events can be handled using by attaching an event handler to the main controller object.
+These message events can be handled by attaching an event handler to the main controller object.
 These event handlers take two parameters: the name of the event, and a callback function which is invoked whenever the event occurs.
 The callback function receives a bot object, which can be used to respond to the message, and a message object.
 
