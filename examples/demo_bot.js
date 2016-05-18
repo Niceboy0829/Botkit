@@ -37,7 +37,7 @@ This bot demonstrates many of the core features of Botkit:
 
   The bot will send a message with a multi-field attachment.
 
-  Send: "dm me"
+  Send: "dm"
 
   The bot will reply with a direct message.
 
