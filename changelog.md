@@ -1,11 +1,5 @@
 # Change Log
 
-## 0.2
-
-Adds support for Twilio IP Messenging bots
-
-Add example bot: twilio_ipm_bot.js
-
 ## 0.1.1
 
 Fix issue with over-zealous try/catch in Slack_web_api.js
