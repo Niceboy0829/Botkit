@@ -1,6 +1,6 @@
 # Botkit and Slack
 
-Botkit designed to ease the process of designing and running useful, creative bots that live inside [Slack](http://slack.com), [Facebook Messenger](http://facebook.com) and other messaging platforms.
+Botkit is designed to ease the process of designing and running useful, creative bots that live inside [Slack](http://slack.com), [Facebook Messenger](http://facebook.com), [Twilio IP Messaging](https://www.twilio.com/docs/api/ip-messaging), and other messaging platforms.
 
 Botkit features a comprehensive set of tools
 to deal with [Slack's integration platform](http://api.slack.com), and allows
@@ -377,7 +377,6 @@ controller.setupWebserver(port,function(err,express_webserver) {
 ```
 
 #### Handling `slash_command` and `outgoing_webhook` events
-
 
 ```
 controller.on('slash_command',function(bot,message) {

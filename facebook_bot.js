@@ -206,7 +206,6 @@ controller.on('facebook_postback', function(bot, message) {
 });
 
 
-
 controller.hears(['call me (.*)', 'my name is (.*)'], 'message_received', function(bot, message) {
     var name = message.match[1];
     controller.storage.users.get(message.user, function(err, user) {
