@@ -104,14 +104,6 @@ function randomCommand() {
 
 }
 
-function randomStatus() {
-
-    var chans = ['completed','timeout','ended'];
-    return chans[Math.floor(Math.random() * chans.length)];
-
-}
-
-
 
 function randomUser() {
 
@@ -121,14 +113,13 @@ function randomUser() {
 
 
 
-
 function commandStat() {
 
     var now = new Date().getTime();
 
     now = now - Math.floor(Math.random() * (86400 * 1000 * 90));
 
-    controller.trigger('remote_command_end', [bot, {channel: randomChannel(), user: randomUser(), now: new Date(now)}, {timestamp: now, command: randomCommand()},{status: randomStatus(), lastActive: 10, startTime:5}]);
+    controller.trigger('command_triggered', [bot, {channel: randomChannel(), user: randomUser(), now: new Date(now)}, {timestamp: now, command: randomCommand()}]);
 
 }
 
