@@ -19,7 +19,8 @@ Botkit features a comprehensive set of tools to deal with popular messaging plat
 
 Botkit is available via NPM.
 
-```bash
+```
+bash
 npm install --save botkit
 ```
 
