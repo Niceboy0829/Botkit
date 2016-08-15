@@ -849,6 +849,7 @@ Then, use it when you create your bot:
 ```javascript
 var controller = Botkit.slackbot({
   logger: new winston.Logger({
+    levels: winston.config.syslog.levels
     transports: [
       new (winston.transports.Console)(),
       new (winston.transports.File)({ filename: './bot.log' })
@@ -857,8 +858,9 @@ var controller = Botkit.slackbot({
 });
 ```
 
+Note: with Winston, we must use the syslog.levels over the default or else some botkit log messages (like 'notice') will not be logged properly.  
 
-##Use BotKit with an Express web server
+##Use Botkit with an Express web server
 Instead of controller.setupWebserver(), it is possible to use a different web server to manage authentication flows, as well as serving web pages.
 
 Here is an example of [using an Express web server alongside BotKit](https://github.com/mvaragnat/botkit-express-demo).
