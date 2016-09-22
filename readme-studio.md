@@ -59,11 +59,14 @@ The thread begins with a command to your bot: @soupme soup. Using Before Middlew
 ```
 controller.studio.before('soup', function(convo, next){
   // get soup of the day
-  var daily_special = controller.tutorial.getDailySpecial();
+  var daily_special = getDailySpecial();
   convo.setVar('daily_special', daily_special);
   // get soup options
-  var soup_menu = controller.tutorial.getMenu();
+  var soup_menu = getMenu();
   convo.setVar('soup_menu', soup_menu);
+  // cleanse the pallet
+  convo.setVar('soup_selection', null);
+  convo.setVar('selected_soup_size', null);
   next();
 });
 ```
@@ -78,61 +81,145 @@ Now that a user has been presented with a menu we want to validate their respons
 We also want to validate it against the menu, and if we find one store it for later in the conversation. Also we want to handle any human input errors here by guiding them to hopefully helpful error states. We do this with code that looks something like this:
 ```
 controller.studio.validate('soup','selected_soup', function(convo, next) {
-  var soup_selection, input = convo.extractResponse('selected_soup');
-  console.log('input: ', input);
-  if(convo.vars.daily_special.name.toLowerCase() === input.toLowerCase()){
-    console.log('selected the dailt special!');
-    soup_selection = convo.vars.daily_special;
-    convo.setVar('soup_selection', soup_selection);
-    convo.changeTopic('soup_selected');
-  }else{
-    var filtered_menu = convo.vars.soup_menu.filter(function(s){
-      return s.name.toLowerCase() === input.toLowerCase();
-    });
-    if(filtered_menu.length === 0){
-      convo.changeTopic('invalid_soup');
-    }else if (filtered_menu.length > 1) {
-      convo.changeTopic('ambiguous_soup');
-    }else {
-      soup_selection = filtered_menu[0];
-      convo.setVar('soup_selection', soup_selection);
-      convo.changeTopic('soup_selected');
+  var found_soup = [], possible_matches = [], soup_selection, input = convo.extractResponse('selected_soup');
+  possible_matches.push(convo.vars.daily_special.name);
+  convo.vars.soup_menu.forEach(function(m){
+    possible_matches.push(m.name);
+  });
+  possible_matches.forEach(function(pm){
+    var re = new RegExp('^' + input.toLowerCase() + '\\b' , 'igm');
+    var found = pm.match(re);
+    if(found){
+      found_soup = convo.vars.soup_menu.filter(function(s){
+        return s.name.toLowerCase() === pm.toLowerCase();
+      });
+      if(found_soup.length === 0){
+        console.log(convo.vars.daily_special.name.toLowerCase(), '|', pm.toLowerCase());
+        if(convo.vars.daily_special.name.toLowerCase() === pm.toLowerCase()){
+          found_soup = [];
+          found_soup.push(convo.vars.daily_special);
+        }
+      }
     }
+  });
+  if(found_soup.length > 0) {
+    convo.setVar('soup_selection', found_soup[0]);
+    convo.changeTopic('soup_selected');
+  }else {
+    convo.changeTopic('invalid_soup');
+  }
+  next();
+});
+```
+And present a list of sub-options to determine size. There is a second validator for the second variable we need to collect. It looks something like this:
+```
+controller.studio.validate('soup','soup_size', function(convo, next) {
+  var selected_soup_size, valid_sizes = ['small', 'medium', 'epic'], input = convo.extractResponse('soup_size');
+  console.log('soup_size: ', input);
+  var filtered_input = valid_sizes.filter(function(s){
+    return s.toLowerCase() === input.toLowerCase();
+  });
+  if(filtered_input.length === 0){
+    convo.changeTopic('invalid_size');
+  }else if (filtered_input.length > 1) {
+    convo.changeTopic('ambiguous_size');
+  }else {
+    selected_soup_size = filtered_input[0];
+    convo.setVar('selected_soup_size', selected_soup_size);
+    convo.setVar('order_confirmation', '123');
+    convo.changeTopic('soup_order_complete');
   }
   next();
 });
 ```
 
-And present a list of sub-options to determine size:
-
 ### Using the After Middleware
 Then we can confirm with the user that the script has their correct order, and provide instructions on how to retrieve their physical order, using following code:
+```
+controller.studio.after('soup', function(convo, next) {
+  if (convo.status == 'completed' && convo.vars.soup_selection && convo.vars.selected_soup_size) {
+    console.log('--------------------------- soup order finished ----------------------------------');
+    console.log('Generated a soup order for', convo.context.user, ' who ordered a', convo.vars.selected_soup_size, ' sized ', convo.vars.soup_selection.name, ' with a confirmation number of ', convo.vars.order_confirmation);
+    console.log('Get started with the soup!');
+    next();
+  }else {
+    next();
+  }
 
-Should we cover any of the other functionality here?
+});
+```
+This will also leave an order in the terminal. That could be piped to a database or API somewhere if you wanted to build a real one.
 
 ## Accessing Botkit Studio from your bot
 ___
 
-### controller.studio.run(bot, message)
+### controller.studio.run(bot, input_text, user, channel)
+| Argument | Description
+|---  |---
+| bot   | A bot instance
+| input_text | The name of a script defined in Botkit Studio
+| user | the user id of the user having the conversation
+| channel | the channel id where the conversation is occurring
+
+`controller.studio.run()` will load a script defined in the Botkit Studio authoring tool, convert it into a Botkit conversation, and perform the conversation to it's completion.
+
+Developers may tap into the conversation as it is conducted using the [before](#controllerstudiobefore), [after](#controllerstudioafter), and [validate](#controllerstudiovalidate) hooks. It is also possible to bind to the normal `convo.on('end')` event because this function also returns the resulting conversation object via a promise:
+
+```
+controller.studio.run(bot, 'hello', message.user, message.channel).then(function(convo) {
+    convo.on('end', function(convo) {
+        if (convo.status=='completed') {
+            // handle successful conversation
+        } else {
+            // handle failed conversation
+        }
+    });
+});
+```
+
+### controller.studio.get(bot, input_text, user, channel)
+| Argument | Description
+|---  |---
+| bot   | A bot instance
+| input_text | The name of a script defined in Botkit Studio
+| user | the user id of the user having the conversation
+| channel | the channel id where the conversation is occurring
+
+`controller.studio.get()` is nearly identical to `controller.studio.run()`, except that instead of automatically and immediately starting the conversation, the function returns it in a dormant state.  
+
+While developers may still tap into the conversation as it is conducted using the [before](#controllerstudiobefore), [after](#controllerstudioafter), and [validate](#controllerstudiovalidate) hooks, it must first be activated using `convo.activate()` in the results of the promise returned by the function.
+
+This enables developers to add template variables to the conversation object before it sends its first message. Read about [using variables in messages](readme.md#using-variable-tokens-and-templates-in-conversation-threads)
+
+```
+controller.studio.run(bot, 'hello', message.user, message.channel).then(function(convo) {
+    convo.setVar('date', new Date());
+    convo.setVar('news', 'This is a news item!');
+
+    // crucial! call convo.activate to set it in motion
+    convo.activate();
+});
+```
+
+
+### controller.studio.runTrigger(bot, input_text, user, channel)
+| Argument | Description
+|---  |---
+| bot   | A bot instance
+| input_text | The name of a script defined in Botkit Studio
+| user | the user id of the user having the conversation
+| channel | the channel id where the conversation is occurring
+
+
+
+### controller.studio.validate(command_name, variable_name, function)
 description here
 
-### controller.studio.runTrigger(bot, message)
+### controller.studio.before(command_name, function)
 description here
 
-### controller.studio.get(bot, text)
+### controller.studio.after(command_name, function)
 description here
-
-
-### controller.studio.validate(command_name, key, func)
-description here
-
-### controller.studio.before(command_name, func)
-description here
-
-### controller.studio.after(command_name, func)
-description here
-
-
 
 ## Hosting
 ___
