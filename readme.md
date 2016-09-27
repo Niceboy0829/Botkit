@@ -423,7 +423,25 @@ Only the user who sent the original incoming message will be able to respond to 
 
 `startPrivateConversation()` is a function that initiates a conversation with a specific user. Note function is currently *Slack-only!*
 
+#### bot.createConversation()
+| Argument | Description
+|---  |---
+| message   | incoming message to which the conversation is in response
+| callback  | a callback function in the form of  function(err,conversation) { ... }
+
+This works just like `startConversation()`, with one main difference - the conversation
+object passed into the callback will be in a dormant state. No messages will be sent,
+and the conversation will not collect responses until it is activated using [convo.activate()](#conversationactivate).
+
+Use `createConversation()` instead of `startConversation()` when you plan on creating more complex conversation structures using [threads](#) or [variables and templates](#using-variable-tokens-and-templates-in-conversation-threads) in your messages.
+
 ### Control Conversation Flow
+
+#### conversation.activate()
+
+This function will cause a dormant conversation created with [bot.createConversation()](#botcreateconversation) to be activated, which will cause it to start sending messages and receiving replies from end users.
+
+A conversation can be kept dormant in order to preload it with [variables](#using-variable-tokens-and-templates-in-conversation-threads), particularly data that requires asynchronous actions to take place such as loading data from a database or remote source.  You may also keep a conversation inactive while you build threads, setting it in motion only when all of the user paths have been defined.
 
 #### conversation.say()
 | Argument | Description
@@ -544,6 +562,195 @@ controller.hears(['question me'], 'message_received', function(bot,message) {
 });
 ```
 
+### Conversation Threads
+
+While conversations with only a few questions can be managed by writing callback functions,
+more complex conversations that require branching, repeating or looping sections of dialog,
+or data validation can be handled using feature of the conversations we call `threads`.
+
+Threads are pre-built chains of dialog between the bot and end user that are built before the conversation begins. Once threads are built, Botkit can be instructed to navigate through the threads automatically, allowing many common programming scenarios such as yes/no/quit prompts to be handled without additional code.
+
+You can build conversation threads in code, or you can use [Botkit Studio](/readme-studio.md)'s script management tool to build them in a friendly web environment. Conversations you build yourself and conversations managed in Botkit Studio work the same way -- they run inside your bot and use your code to manage the outcome.
+
+If you've used the conversation system at all, you've used threads - you just didn't know it. When calling `convo.say()` and `convo.ask()`, you were actually adding messages to the `default` conversation thread that is activated when the conversation object is created.
+
+
+#### convo.addMessage
+| Argument | Description
+|---  |---
+| message   | String or message object
+| thread_name   | String defining the name of a thread
+
+This function works identically to `convo.say()` except that it takes a second parameter which defines the thread to which the message will be added rather than being queued to send immediately, as is the case when using convo.say().
+
+#### convo.addQuestion
+| Argument | Description
+|---  |---
+| message   | String or message object containing the question
+| callback _or_ array of callbacks   | callback function in the form function(response_message,conversation), or array of objects in the form ``{ pattern: regular_expression, callback: function(response_message,conversation) { ... } }``
+| capture_options | _Optional_ Object defining options for capturing the response
+| thread_name   | String defining the name of a thread
+
+This function works identically to `convo.ask()` except that it takes second parameter which defines the thread to which the message will be added rather than being queued to send immediately, as is the case when using convo.ask().
+
+
+#### convo.gotoThread
+| Argument | Description
+|---  |---
+| thread_name   | String defining the name of a thread
+
+Cause the bot to immediately jump to the named thread.
+All conversations start in a thread called `default`, but you may switch to another existing thread before the conversation has been activated, or in a question callback.
+
+Threads are created by adding messages to them using `addMessage()` and `addQuestion()`
+
+```
+// create the validation_error thread
+convo.addMessage('This is a validation error.', 'validation_error');
+convo.addMessage('I am sorry, your data is wrong!', 'validation_error');
+
+// switch to the validation thread immediately
+convo.gotoThread('validation_error');
+```
+
+#### Automatically Switch Threads using Actions
+
+You can direct a conversation to switch from one thread to another automatically
+by including the `action` field on a message object. Botkit will switch threads immediately after sending the message.
+
+```
+// first, define a thread called `next_step` that we'll route to...
+convo.addMessage({
+    text: 'This is the next step...',
+},'next_step');
+
+
+// send a message, and tell botkit to immediately go to the next_step thread
+convo.addMessage({
+    text: 'Anyways, moving on...',
+    action: 'next_step'
+});
+```
+
+Developers can create fairly complex conversational systems by combining these message actions with conditionals in `ask()` and `addQuestion()`.  Actions can be used to specify
+default or next step actions, while conditionals can be used to route between threads.
+
+From inside a callback function, use `convo.gotoThread()` to instantly switch to a different pre-defined part of the conversation. Botkit can be set to automatically navigate between threads based on user input, such as in the example below.
+
+```
+bot.createConversation(message, function(err, convo) {
+
+    // create a path for when a user says YES
+    convo.addMessage({
+            text: 'You said yes! How wonderful.',
+    },'yes_thread');
+
+    // create a path for when a user says NO
+    convo.addMessage({
+        text: 'You said no, that is too bad.',
+    },'no_thread');
+
+    // create a path where neither option was matched
+    // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
+    convo.addMessage({
+        text: 'Sorry I did not understand.',
+        action: 'default',
+    },'bad_response');
+
+    // Create a yes/no question in the default thread...
+    convo.ask('Do you like cheese?', [
+        {
+            pattern: 'yes',
+            callback: function(response, convo) {
+                convo.changeTopic('yes_thread');
+            },
+        },
+        {
+            pattern: 'no',
+            callback: function(response, convo) {
+                convo.changeTopic('no_thread');
+            },
+        },
+        {
+            default: true,
+            callback: function(response, convo) {
+                convo.changeTopic('bad_response');
+            },
+        }
+    ]);
+
+    convo.activate();
+});
+```
+
+#### Special Actions
+
+In addition to routing from one thread to another using actions, you can also use
+one of a few reserved words to control the conversation flow.
+
+Set the action field of a message to `completed` to end the conversation immediately and mark as success.
+
+Set the action field of a message to `stop` end immediately, but mark as failed.
+
+Set the action field of a message to `timeout` to end immediately and indicate that the conversation has timed out.
+
+After the conversation ends, these values will be available in the `convo.status` field. This field can then be used to check the final outcome of a conversation. See [handling the end of conversations](#handling-the-end-of-conversation).
+
+### Using Variable Tokens and Templates in Conversation Threads
+
+Pre-defined conversation threads are great, but many times developers will need to inject dynamic content into a conversation.
+Botkit achieves this by processing the text of every message using the [Mustache template language](https://mustache.github.io/).
+Mustache offers token replacement, as well as access to basic iterators and conditionals.
+
+Variables can be added to a conversation at any point after the conversation object has been created using the function `convo.setVar()`. See the example below.
+
+```
+convo.createConversation(message, function(err, convo) {
+
+    // .. define threads which will use variables...
+    // .. and then, set variable values:
+    convo.setVar('foo','bar');
+    convo.setVar('list',[{value:'option 1'},{value:'option 2'}]);
+    convo.setVar('object',{'name': 'Chester', 'type': 'imaginary'});
+
+    // now set the conversation in motion...
+    convo.activate();
+});
+```
+
+Given the variables defined in this code sample, `foo`, a simple string, `list`, an array, and `object`, a JSON-style object,
+the following Mustache tokens and patterns would be available:
+
+```
+The value of foo is {{vars.foo}}
+
+The items in this list include {{#vars.list}}{{value}}{{/vars.list}}
+
+The object's name is {{vars.object.name}}.
+
+{{#foo}}If foo is set, I will say this{{/foo}}{{^foo}}If foo is not set, I will say this other thing.{{/foo}}
+```
+Botkit ensures that your template is a valid Mustache template, and passes the variables you specify directly to the Mustache template rendering system.
+Our philosophy is that it is OK to stuff whatever type of information your conversation needs into these variables and use them as you please!
+
+#### convo.setVar
+| Argument | Description
+|---  |---
+| variable_name   | The name of a variable to be made available to message text templates.
+| value | The value of the variable, which can be any type of normal Javascript variable
+
+Create or update a variable that is available as a Mustache template token to all the messages in all the threads contained in the conversation.
+
+The variable will be available in the template as `{{vars.variable_name}}`
+
+#### Built-in Variables
+
+Botkit provides several built in variables that are automatically available to all messages:
+
+{{origin}} - a message object that represents the initial triggering message that caused the conversation.
+
+{{responses}} - an object that contains all of the responses a user has given during the course of the conversation. This can be used to make references to previous responses. This requires that `convo.ask()` questions include a keyname, making responses available at `{{responses.keyname}}`
+
 ##### Multi-stage conversations
 
 ![multi-stage convo example](https://www.evernote.com/shard/s321/sh/7243cadf-be40-49cf-bfa2-b0f524176a65/f9257e2ff5ee6869/res/bc778282-64a5-429c-9f45-ea318c729225/screenshot.png?resizeSmall&width=832)
@@ -610,8 +817,7 @@ Conversations trigger events during the course of their life.  Currently,
 only two events are fired, and only one is very useful: end.
 
 Conversations end naturally when the last message has been sent and no messages remain in the queue.
-In this case, the value of `convo.status` will be `completed`. Other values for this field include `active`, `stopped`, and
-`timeout`.
+In this case, the value of `convo.status` will be `completed`. Other values for this field include `active`, `stopped`, and `timeout`.
 
 ```javascript
 convo.on('end',function(convo) {
