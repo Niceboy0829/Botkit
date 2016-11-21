@@ -16,7 +16,6 @@ Table of Contents
 * [Working with Facebook Webhooks](#working-with-facebook-messenger)
 * [Using Structured Messages and Postbacks](#using-structured-messages-and-postbacks)
 * [Simulate typing](#simulate-typing)
-* [Silent and No Notifications](#silent-and-no-notifications)
 * [Running Botkit with an Express server](#use-botkit-for-facebook-messenger-with-an-express-web-server)
 
 ## Getting Started
@@ -71,7 +70,9 @@ All incoming events will contain the fields `user` and `channel`, both of which 
 
 `message_received` events will also contain either a `text` field or an `attachment` field.
 
-`facebook_postback` events will contain a `payload` field.
+`facebook_postback` events will contain a `payload` field. 
+
+Notice also that `facebook_postback` events trigger the `message_received` event as well. That is why messages will have the `type` field as well. When the message is directly from the user (i.e. onlye `message_received` event) `type` will be set to `"user_message"` and when the message is originated in a `facebook_postback` then `type` will be set to `facebook_postback`.
 
 More information about the data found in these fields can be found [here](https://developers.facebook.com/docs/messenger-platform/webhook-reference).
 
