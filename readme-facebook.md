@@ -66,13 +66,12 @@ Normal messages will be sent to your bot using the `message_received` event.  In
 | message_delivered | a confirmation from Facebook that a message has been received
 | message_read | a confirmation from Facebook that a message has been read
 | facebook_optin | a user has clicked the [Send-to-Messenger plugin](https://developers.facebook.com/docs/messenger-platform/implementation#send_to_messenger_plugin)
-| message_referral | a user has clicked on a [m.me URL with a referral param](https://developers.facebook.com/docs/messenger-platform/referral-params)
 
 All incoming events will contain the fields `user` and `channel`, both of which represent the Facebook user's ID, and a `timestamp` field.
 
 `message_received` events will also contain either a `text` field or an `attachment` field.
 
-`facebook_postback` events will contain a `payload` field.
+`facebook_postback` events will contain a `payload` field. 
 
 Notice also that `facebook_postback` events trigger the `message_received` event as well. That is why messages will have the `type` field as well. When the message is directly from the user (i.e. onlye `message_received` event) `type` will be set to `"user_message"` and when the message is originated in a `facebook_postback` then `type` will be set to `facebook_postback`.
 
@@ -242,76 +241,6 @@ reply_message = {
 }
 bot.reply(message, reply_message)
 ```
-
-## Thread Settings API
-
-Facebook offers a "Thread Settings" API to customize special bot features
-such as a persistent menu and a welcome screen. We highly recommend you use all of these features, which will make your bot easier for users to work with. [Read Facebook's docs here](https://developers.facebook.com/docs/messenger-platform/thread-settings).
-
-#### controller.api.thread_settings.greeting()
-| Argument | Description
-|---  |---
-| message | greeting message to display on welcome screen
-
-#### controller.api.thread_settings.delete_greeting()
-
-Remove the greeting message.
-
-#### controller.api.thread_settings.get_started()
-| Argument | Description
-|---  |---
-| payload | value for the postback payload sent when the button is clicked
-
-Set the payload value of the 'Get Started' button
-
-#### controller.api.thread_settings.delete_get_started()
-
-Clear the payload value of the 'Get Started' button and remove it.
-
-#### controller.api.thread_settings.menu()
-| Argument | Description
-|---  |---
-| menu_items | an array of [menu_item objects](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu#menu_item)
-
-Create a [persistent menu](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu) for your Bot
-
-#### controller.api.thread_settings.delete_menu()
-
-Clear the persistent menu setting
-
-#### Using the Thread Settings API
-
-```js
-controller.api.thread_settings.greeting('Hello! I\'m a Botkit bot!');
-controller.api.thread_settings.get_started('sample_get_started_payload');
-controller.api.thread_settings.menu([
-    {
-        "type":"postback",
-        "title":"Hello",
-        "payload":"hello"
-    },
-    {
-        "type":"postback",
-        "title":"Help",
-        "payload":"help"
-    },
-    {
-      "type":"web_url",
-      "title":"Botkit Docs",
-      "url":"https://github.com/howdyai/botkit/blob/master/readme-facebook.md"
-    },
-]);
-
-controller.hears(['hello'],'facebook_postback', function(bot, message) {
-    //...
-});
-
-controller.hears(['help'],'facebook_postback', function(bot, message) {
-    //...
-});
-
-```
-
 
 ## Use BotKit for Facebook Messenger with an Express web server
 Instead of the web server generated with setupWebserver(), it is possible to use a different web server to receive webhooks, as well as serving web pages.

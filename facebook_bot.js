@@ -96,7 +96,6 @@ if(ops.lt === false && ops.ltsubdomain !== null) {
 
 var controller = Botkit.facebookbot({
     debug: true,
-    log: true,
     access_token: process.env.page_token,
     verify_token: process.env.verify_token,
 });
@@ -124,26 +123,6 @@ controller.setupWebserver(process.env.port || 3000, function(err, webserver) {
     });
 });
 
-controller.api.thread_settings.greeting('Hello! I\'m a Botkit bot!');
-controller.api.thread_settings.get_started('sample_get_started_payload');
-controller.api.thread_settings.menu([
-    {
-        "type":"postback",
-        "title":"Hello",
-        "payload":"hello"
-    },
-    {
-        "type":"postback",
-        "title":"Help",
-        "payload":"help"
-    },
-    {
-      "type":"web_url",
-      "title":"Botkit Docs",
-      "url":"https://github.com/howdyai/botkit/blob/master/readme-facebook.md"
-    },
-]);
-
 controller.hears(['quick'], 'message_received', function(bot, message) {
 
     bot.reply(message, {
@@ -164,7 +143,7 @@ controller.hears(['quick'], 'message_received', function(bot, message) {
 
 });
 
-controller.hears(['hello', 'hi'], 'message_received,facebook_postback', function(bot, message) {
+controller.hears(['hello', 'hi'], 'message_received', function(bot, message) {
     controller.storage.users.get(message.user, function(err, user) {
         if (user && user.name) {
             bot.reply(message, 'Hello ' + user.name + '!!');
@@ -254,8 +233,8 @@ controller.hears(['structured'], 'message_received', function(bot, message) {
 });
 
 controller.on('facebook_postback', function(bot, message) {
-    // console.log(bot, message);
-   bot.reply(message, 'Great Choice!!!! (' + message.payload + ')');
+
+    bot.reply(message, 'Great Choice!!!! (' + message.payload + ')');
 
 });
 
