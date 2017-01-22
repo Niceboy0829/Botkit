@@ -673,7 +673,7 @@ conversation.
 
 ```javascript
 // create an end state thread
-covo.addMessage('This is the end!', 'the_end');
+convo.addMessage('This is the end!', 'the_end');
 
 // now transition there with a nice message
 convo.transitionTo('the_end','Well I think I am all done.');
@@ -760,7 +760,7 @@ Set the action field of a message to `stop` end immediately, but mark as failed.
 
 Set the action field of a message to `timeout` to end immediately and indicate that the conversation has timed out.
 
-After the conversation ends, these values will be available in the `convo.status` field. This field can then be used to check the final outcome of a conversation. See [handling the end of conversations](#handling-end-of-conversation).
+After the conversation ends, these values will be available in the `convo.status` field. This field can then be used to check the final outcome of a conversation. See [handling the end of conversations](#handling-the-end-of-conversation).
 
 ### Using Variable Tokens and Templates in Conversation Threads
 
