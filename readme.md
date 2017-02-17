@@ -33,7 +33,7 @@ Botkit Studio is built on top of Botkit, so everything that works with Botkit co
 
 There are two ways to start a Botkit project:
 
-1) Install the Botkit Studio Starter Kit [for Slack](https://github.com/howdyai/botkit-starter-slack) or [for Facebook](https://github.com/howdyai/botkit-starter-facebook) and build on top of an already fully functioning bot
+1) Install the Botkit Studio Starter Kit [for Slack](https://github.com/howdyai/botkit-starter-slack) or [for Cisco Spark](https://github.com/howdyai/botkit-starter-ciscospark) or [for Facebook](https://github.com/howdyai/botkit-starter-facebook) and build on top of an already fully functioning bot
 that comes pre-configured with popular middleware plug-ins and components.
 
 2) [Install Botkit directly from NPM or Github](#install-botkit-from-npm-or-github) and build a new app from scratch, or use one of the [included examples](#included-examples) as a starting point.
@@ -886,8 +886,6 @@ so that it is sent immediately, before any other queued messages.
 `convo.silentRepeat()` simply wait for another response without saying anything.
 
 `convo.next()` proceed to the next message in the conversation.  *This must be called* at the end of each handler.
-
-`convo.setTimeout(timeout)` times out conversation if no response from user after specified time period (in milliseconds).
 
 ### Handling End of Conversation
 
