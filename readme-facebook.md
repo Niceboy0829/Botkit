@@ -294,60 +294,48 @@ reply_message = {
 bot.reply(message, reply_message)
 ```
 
-## Thread Setting API
+## Thread Settings API
 
-Thread setting API is now messenger profile API, it's highly recommended to use profile API instead of thread setting one, however, Botkit thread setting interface still available :
+Facebook offers a "Thread Settings" API to customize special bot features
+such as a persistent menu and a welcome screen. We highly recommend you use all of these features, which will make your bot easier for users to work with. [Read Facebook's docs here](https://developers.facebook.com/docs/messenger-platform/thread-settings).
 
- 
-```js
-controller.api.messenger_profile.YOUR_METHOD_NAME();
-controller.api.thread_settings.YOUR_METHOD_NAME();
-
-```
-
-
-## Messenger Profile API
-
-Facebook offers a Messenger Profile API to customize special bot features
-such as a persistent menu and a welcome screen. We highly recommend you use all of these features, which will make your bot easier for users to work with. [Read Facebook's docs here](https://developers.facebook.com/docs/messenger-platform/messenger-profile).
-
-#### controller.api.messenger_profile.greeting()
+#### controller.api.thread_settings.greeting()
 | Argument | Description
 |---  |---
 | message | greeting message to display on welcome screen
 
-#### controller.api.messenger_profile.delete_greeting()
+#### controller.api.thread_settings.delete_greeting()
 
 Remove the greeting message.
 
-#### controller.api.messenger_profile.get_started()
+#### controller.api.thread_settings.get_started()
 | Argument | Description
 |---  |---
 | payload | value for the postback payload sent when the button is clicked
 
 Set the payload value of the 'Get Started' button
 
-#### controller.api.messenger_profile.delete_get_started()
+#### controller.api.thread_settings.delete_get_started()
 
 Clear the payload value of the 'Get Started' button and remove it.
 
-#### controller.api.messenger_profile.menu()
+#### controller.api.thread_settings.menu()
 | Argument | Description
 |---  |---
-| menu_items | an array of menu_item objects
+| menu_items | an array of [menu_item objects](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu#menu_item)
 
-Create a [persistent menu](https://developers.facebook.com/docs/messenger-platform/messenger-profile/persistent-menu) for your Bot
+Create a [persistent menu](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu) for your Bot
 
-#### controller.api.messenger_profile.delete_menu()
+#### controller.api.thread_settings.delete_menu()
 
 Clear the persistent menu setting
 
-#### Using the The Messenger Profile API
+#### Using the Thread Settings API
 
 ```js
-controller.api.messenger_profile.greeting('Hello! I\'m a Botkit bot!');
-controller.api.messenger_profile.get_started('sample_get_started_payload');
-controller.api.messenger_profile.menu([
+controller.api.thread_settings.greeting('Hello! I\'m a Botkit bot!');
+controller.api.thread_settings.get_started('sample_get_started_payload');
+controller.api.thread_settings.menu([
     {
         "type":"postback",
         "title":"Hello",
@@ -364,8 +352,8 @@ controller.api.messenger_profile.menu([
       "url":"https://github.com/howdyai/botkit/blob/master/readme-facebook.md"
     },
 ]);
-controller.api.messenger_profile.account_linking('https://www.yourAwesomSite.com/oauth?response_type=code&client_id=1234567890&scope=basic');
-controller.api.messenger_profile.delete_account_linking();
+controller.api.thread_settings.account_linking('https://www.yourAwesomSite.com/oauth?response_type=code&client_id=1234567890&scope=basic');
+controller.api.thread_settings.delete_account_linking();
 
 
 controller.hears(['hello'],'facebook_postback', function(bot, message) {
