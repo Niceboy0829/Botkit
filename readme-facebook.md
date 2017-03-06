@@ -30,7 +30,7 @@ Table of Contents
 
 Copy this token, you'll need it!
 
-4) Define your own "verify token" - this is a string that you control that Facebook will use to verify your web hook endpoint.
+4) Define your own "verify token" - this a string that you control that Facebook will use to verify your web hook endpoint.
 
 5) Run the example bot app, using the two tokens you just created. If you are _not_ running your bot at a public, SSL-enabled internet address, use the --lt option and note the URL it gives you.
 
@@ -286,7 +286,7 @@ When sending a user a message you can make the message have either no notificati
 
 `notification_type` is optional. By default, messages will be REGULAR push notification type
 
-```javascript
+```
 reply_message = {
     text: "Message text here",
     notification_type: NOTIFICATION_TYPE
