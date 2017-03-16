@@ -1,26 +1,5 @@
 # Change Log
 
-## 0.5.2
-
-Add support for Slack's new `chat.unfurl` method for use with [App Unfurls](https://api.slack.com/docs/message-link-unfurling)
-
-PR https://github.com/howdyai/botkit/pull/677
-
-PR https://github.com/howdyai/botkit/pull/690
-PR https://github.com/howdyai/botkit/pull/689
-PR https://github.com/howdyai/botkit/pull/573
-
-PR https://github.com/howdyai/botkit/pull/691
-PR https://github.com/howdyai/botkit/pull/699
-
-PR https://github.com/howdyai/botkit/pull/678
-
-PR https://github.com/howdyai/botkit/pull/657
-
-PR https://github.com/howdyai/botkit/pull/578
-PR https://github.com/howdyai/botkit/pull/567
-PR https://github.com/howdyai/botkit/pull/498
-
 ## 0.5.1
 
 Fixes for Cisco Spark:
