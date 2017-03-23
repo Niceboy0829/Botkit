@@ -16,11 +16,11 @@ a future filled with talking machines!
 
 Botkit features a comprehensive set of tools to deal with popular messaging platforms, including:
 
-* [Slack](readme-slack.md)
-* [Cisco Spark](readme-ciscospark.md)
-* [Facebook Messenger](readme-facebook.md)
-* [Twilio IP Messaging](readme-twilioipm.md)
-* [Microsoft Bot Framework](readme-botframework.md)
+* [Slack](docs/readme-slack.md)
+* [Cisco Spark](docs/readme-ciscospark.md)
+* [Facebook Messenger](docs/readme-facebook.md)
+* [Twilio IP Messaging](docs/readme-twilioipm.md)
+* [Microsoft Bot Framework](docs/readme-botframework.md)
 * Yours? [info@howdy.ai](mailto:info@howdy.ai)
 
 ---
@@ -58,7 +58,7 @@ Note: While [using Botkit Studio](https://studio.botkit.ai) is highly recommende
 > ### [Slack Bot Starter Kit](https://github.com/howdyai/botkit-starter-slack)
 > The Slack starter kit contains everything you need to create a multi-team Slack application,
 suitable for internal use or submission to [Slack's app store.](https://slack.com/apps)
-> #### [![Remix on Glitch](https://cdn.gomix.com/2bdfb3f8-05ef-4035-a06e-2043962a3a13%2Fremix-button.svg)](https://glitch.com/edit/#!/import/github/howdyai/botkit-starter-slack)
+> #### [![Remix on Glitch](https://cdn.gomix.com/2bdfb3f8-05ef-4035-a06e-2043962a3a13%2Fremix-button.svg | width=100)](https://glitch.com/edit/#!/import/github/howdyai/botkit-starter-slack)
 
 > ### [Cisco Spark Bot Starter Kit](https://github.com/howdyai/botkit-starter-ciscospark)
 > Build a bot inside Cisco Spark's collaboration and messaging platform. Bots built with the starter kit
