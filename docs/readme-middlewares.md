@@ -53,10 +53,6 @@ You can use the Recast.AI API to analyse your text or your audio file, and extra
 
 # Storage Modules
 
-## Mongo
-### [Project Page](https://github.com/howdyai/botkit-storage-mongo)
-A Mongo storage module for Botkit
-
 ## Redis
 ### [Project Page](https://github.com/howdyai/botkit-storage-redis)
 A redis storage module for Botkit
