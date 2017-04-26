@@ -22,7 +22,7 @@ Table of Contents
 ---
 ## Getting Started
 
-1) Install Botkit on your hosting platform of choice [more info here](readme.md#installation). 
+1) Install Botkit [more info here](readme.md#installation)
 
 2) First make a bot integration inside of your Slack channel. Go here:
 
@@ -59,7 +59,8 @@ Type: `/invite @<my bot>` to invite your bot into another channel.
 
 ## Connecting Your Bot to Slack
 
-Bot users connect to Slack using a real time API based on web sockets. The bot connects to Slack using the same protocol that the native Slack clients use!
+Bot users connect to Slack using a real time API based on web sockets.
+The bot connects to Slack using the same protocol that the native Slack clients use!
 
 To connect a bot to Slack, [get a Bot API token from the Slack integrations page](https://my.slack.com/services/new/bot).
 
@@ -923,6 +924,8 @@ Developers may want to create an RTM connection in order to make the bot appear 
 4. Select the specific events you would like to subscribe to with your bot. Slack only sends your webhook the events you subscribe to. Read more about Event Types [here](https://api.slack.com/events)
 5. When running your bot, you must configure the slack app, setup webhook endpoints, and oauth endpoints.
 
+Note:  If you are not also establishing an RTM connection, you will need to manually run the `controller.startTicking()` method for conversations to work properly.
+
 ```javascript
 var controller = Botkit.slackbot({
     debug: false,
@@ -946,6 +949,9 @@ controller.setupWebserver(process.env.port, function(err, webserver) {
             res.send('Success!');
         }
     });
+    
+    // If not also opening an RTM connection
+    controller.startTicking();
 });
 ```
 
