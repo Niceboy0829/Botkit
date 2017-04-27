@@ -4,7 +4,7 @@ Botkit is designed to ease the process of designing and running useful, creative
 
 
 Botkit features a comprehensive set of tools
-to deal with [Facebooks's Messenger platform](https://developers.facebook.com/docs/messenger-platform/implementation) as well as [Facebook @Workplace](https://facebook.com/workplace), and allows
+to deal with [Facebooks's Messenger platform](https://developers.facebook.com/docs/messenger-platform/implementation), and allows
 developers to build interactive bots and applications that send and receive messages just like real humans. Facebook bots can be connected to Facebook Pages, and can be triggered using a variety of [useful web plugins](https://developers.facebook.com/docs/messenger-platform/plugin-reference).
 
 This document covers the Facebook-specific implementation details only. [Start here](readme.md) if you want to learn about to develop with Botkit.
@@ -28,7 +28,6 @@ Table of Contents
 
 2) Create a [Facebook App for Web](https://developers.facebook.com/quickstarts/?platform=web) and note down or [create a new Facebook Page](https://www.facebook.com/pages/create/).  Your Facebook page will be used for the app's identity.
 
-
 3) [Get a page access token for your app](https://developers.facebook.com/docs/messenger-platform/guides/setup#page_access_token)
 
 Copy this token, you'll need it!
@@ -42,8 +41,6 @@ page_token=<MY PAGE TOKEN> verify_token=<MY_VERIFY_TOKEN> node facebook_bot.js [
 ```
 
 6) [Set up a webhook endpoint for your app](https://developers.facebook.com/docs/messenger-platform/guides/setup#webhook_setup) that uses your public URL. Use the verify token you defined in step 4!
-
-* *Note* - You will need to provide Facebook a callback endpoint to receive requests from Facebook. By default Botkit will serve content from "https://YOURSERVER/facebook/receive". You can use a tool like [ngrok.io](http://ngrok.io) or [localtunnel.me](http://localtunnel.me) to expose your local development enviroment to the outside world for the purposes of testing your Messenger bot.
 
 7) Your bot should be online! Within Facebook, find your page, and click the "Message" button in the header.
 
@@ -304,7 +301,6 @@ bot.reply(message, reply_message)
 
 Messenger Codes can be scanned in Messenger to instantly link the user to your bot, no typing needed. They're great for sticking on fliers, ads, or anywhere in the real world where you want people to try your bot.
 
-- Get Static Codes :
 ```javascript
 controller.api.messenger_profile.get_messenger_code(2000, function (err, url) {
     if(err) {
@@ -313,17 +309,6 @@ controller.api.messenger_profile.get_messenger_code(2000, function (err, url) {
         // url
     }
 });
-```
-
-- Get Parametric Codes :
-```javascript
-controller.api.messenger_profile.get_messenger_code(2000, function (err, url) {
-    if(err) {
-        // Error
-    } else {
-        // url
-    }
-}, 'billboard-ad');
 ```
 
 ## Thread Settings API
@@ -393,7 +378,7 @@ Get the menu setting.
 
 #### controller.api.messenger_profile.delete_account_linking()
 
-Remove the account link
+Remove the account link 
 
 #### controller.api.messenger_profile.get_account_linking()
 
@@ -411,23 +396,6 @@ Remove all domains
 #### controller.api.messenger_profile.get_domain_whitelist()
 
 Get a list of the whitelisted domains.
-
-### controller.api.messenger_profile.home_url()
-| Argument | Description
-|---  |---
-| payload | A home_url object with the properties `url`, `webview_height_ratio`, `in_test`
-
-View the facebook documentation for details of the [home_url](https://developers.facebook.com/docs/messenger-platform/messenger-profile/home-url) payload object.
-
-*NB.* The value of the `url` property must be present in the domain_whitelist array
-
-### controller.api.messenger_profile.delete_home_url()
-
-Remove the home_url setting
-
-### controller.api.messenger_profile.get_home_url()
-
-Get the home_url
 
 #### Using the The Messenger Profile API
 
@@ -474,35 +442,20 @@ controller.api.messenger_profile.get_account_linking(function (err, accountLinki
 controller.api.messenger_profile.delete_account_linking();
 controller.api.messenger_profile.domain_whitelist('https://localhost');
 controller.api.messenger_profile.domain_whitelist(['https://127.0.0.1', 'https://0.0.0.0']);
-controller.api.messenger_profile.delete_domain_whitelist();
+controller.api.messenger_profile.delete_domain_whitelist('https://localhost');
+controller.api.messenger_profile.delete_domain_whitelist(['https://127.0.0.1', 'https://0.0.0.0']);
 controller.api.messenger_profile.get_domain_whitelist(function (err, data)  {
     console.log('****** Whitelisted domains :', data);
 });
 
-controller.api.messenger_profile.home_url({
-    "url": 'https://mydomain.com',
-    "webview_height_ratio": 'tall',
-    "in_test": false
-})
 
-controller.api.messenger_profile.get_home_url(function (err, data)  {
-    console.log('****** Home url :', data);
+controller.hears(['hello'],'facebook_postback', function(bot, message) {
+    //...
 });
 
-controller.api.messenger_profile.delete_home_url();
-
-// Target Audience
-controller.api.messenger_profile.target_audience({
-    "audience_type":"custom",
-    "countries":{
-        "whitelist":["US", "CA"]
-    }
+controller.hears(['help'],'facebook_postback', function(bot, message) {
+    //...
 });
-controller.api.messenger_profile.delete_target_audience();
-controller.api.messenger_profile.get_target_audience(function (err, data)  {
-    console.log('****** Target Audience :', data);
-});
-
 
 ```
 
@@ -511,23 +464,3 @@ controller.api.messenger_profile.get_target_audience(function (err, data)  {
 Instead of the web server generated with setupWebserver(), it is possible to use a different web server to receive webhooks, as well as serving web pages.
 
 Here is an example of [using an Express web server alongside BotKit for Facebook Messenger](https://github.com/mvaragnat/botkit-messenger-express-demo).
-
-## Documentation
-
-* [Get Started](readme.md)
-* [Botkit Studio API](readme-studio.md)
-* [Function index](readme.md#developing-with-botkit)
-* [Extending Botkit with Plugins and Middleware](middleware.md)
-  * [List of current plugins](readme-middlewares.md)
-* [Storing Information](storage.md)
-* [Logging](logging.md)
-* Platforms
-  * [Slack](readme-slack.md)
-  * [Cisco Spark](readme-ciscospark.md)
-  * [Facebook Messenger](readme-facebook.md)
-  * [Twilio IPM](readme-twilioipm.md)
-  * [Microsoft Bot Framework](readme-botframework.md)
-* Contributing to Botkit
-  * [Contributing to Botkit Core](../CONTRIBUTING.md)
-  * [Building Middleware/plugins](howto/build_middleware.md)
-  * [Building platform connectors](howto/build_connector.md)
