@@ -6,11 +6,11 @@
             \/_____/   \/_____/     \/_/   \/_/\/_/   \/_/     \/_/
 
 
-This is a sample Slack bot built with Botkit.
+This is a sample Microsoft Bot Framework bot built with Botkit.
 
 This bot demonstrates many of the core features of Botkit:
 
-* Connect to Slack using the real time API
+* Connect to the Microsoft Bot Framework Service
 * Receive messages based on "spoken" patterns
 * Reply to messages
 * Use the conversation system to ask questions
@@ -19,17 +19,17 @@ This bot demonstrates many of the core features of Botkit:
 
 # RUN THE BOT:
 
-  Get a Bot token from Slack:
-
-    -> http://my.slack.com/services/new/bot
+  Follow the instructions in the "Getting Started" section of the readme-botframework.md file to register your bot.
 
   Run your bot from the command line:
 
-    token=<MY TOKEN> node bot.js
+    app_id=<MY APP ID> app_password=<MY APP PASSWORD> node botframework_bot.js [--lt [--ltsubdomain LOCALTUNNEL_SUBDOMAIN]]
+
+  Use the --lt option to make your bot available on the web through localtunnel.me.
 
 # USE THE BOT:
 
-  Find your bot inside Slack to send it a direct message.
+  Find your bot inside Skype to send it a direct message.
 
   Say: "Hello"
 
@@ -64,79 +64,58 @@ This bot demonstrates many of the core features of Botkit:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-if (!process.env.token) {
-    console.log('Error: Specify token in environment');
-    process.exit(1);
+var Botkit = require('./lib/Botkit.js');
+var os = require('os');
+var commandLineArgs = require('command-line-args');
+var localtunnel = require('localtunnel');
+
+const ops = commandLineArgs([
+      {name: 'lt', alias: 'l', args: 1, description: 'Use localtunnel.me to make your bot available on the web.',
+      type: Boolean, defaultValue: false},
+      {name: 'ltsubdomain', alias: 's', args: 1,
+      description: 'Custom subdomain for the localtunnel.me URL. This option can only be used together with --lt.',
+      type: String, defaultValue: null},
+   ]);
+
+if(ops.lt === false && ops.ltsubdomain !== null) {
+    console.log("error: --ltsubdomain can only be used together with --lt.");
+    process.exit();
 }
 
-var Botkit = require('../../lib/Botkit.js');
-var os = require('os');
-
-var controller = Botkit.slackbot({
-    debug: true,
+var controller = Botkit.botframeworkbot({
+    debug: true
 });
 
 var bot = controller.spawn({
-    token: process.env.token
-}).startRTM();
-
-
-// Example receive middleware.
-// for example, recognize several common variations on "hello" and add an intent field to the message
-// see below for example hear_intent function
-controller.middleware.receive.use(function(bot, message, next) {
-
-    console.log('Receive middleware!');
-    // make changes to bot or message here before calling next
-    if (message.text == 'hello' || message.text == 'hi' || message.text == 'howdy' || message.text == 'hey') {
-        message.intent = 'hello';
-    }
-
-    next();
-
+    appId: process.env.app_id,
+    appPassword: process.env.app_password
 });
 
-// Example send middleware
-// make changes to bot or message here before calling next
-// for example, do formatting or add additional information to the message
-controller.middleware.send.use(function(bot, message, next) {
+controller.setupWebserver(process.env.port || 3000, function(err, webserver) {
+    controller.createWebhookEndpoints(webserver, bot, function() {
+        console.log('ONLINE!');
+        if(ops.lt) {
+            var tunnel = localtunnel(process.env.port || 3000, {subdomain: ops.ltsubdomain}, function(err, tunnel) {
+                if (err) {
+                    console.log(err);
+                    process.exit();
+                }
+                console.log("Your bot is available on the web at the following URL: " + tunnel.url + '/botframework/receive');
+            });
 
-    console.log('Send middleware!');
-    next();
-
-});
-
-
-// Example hear middleware
-// Return true if one of [patterns] matches message
-// In this example, listen for an intent field, and match using that instead of the text field
-function hear_intent(patterns, message) {
-
-    for (var p = 0; p < patterns.length; p++) {
-        if (message.intent == patterns[p]) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-/* note this uses example middlewares defined above */
-controller.hears(['hello'],'direct_message,direct_mention,mention',hear_intent, function(bot, message) {
-
-    bot.api.reactions.add({
-        timestamp: message.ts,
-        channel: message.channel,
-        name: 'robot_face',
-    },function(err, res) {
-        if (err) {
-            bot.botkit.log('Failed to add emoji reaction :(',err);
+            tunnel.on('close', function() {
+                console.log("Your bot is no longer available on the web at the localtunnnel.me URL.");
+                process.exit();
+            });
         }
     });
+});
 
 
-    controller.storage.users.get(message.user,function(err, user) {
+
+controller.hears(['hello', 'hi'], 'message_received', function(bot, message) {
+
+    controller.storage.users.get(message.user, function(err, user) {
         if (user && user.name) {
             bot.reply(message, 'Hello ' + user.name + '!!');
         } else {
@@ -145,26 +124,25 @@ controller.hears(['hello'],'direct_message,direct_mention,mention',hear_intent, 
     });
 });
 
-controller.hears(['call me (.*)','my name is (.*)'],'direct_message,direct_mention,mention',function(bot, message) {
-
-    // the name will be stored in the message.match field
-    var name = message.match[1];
-    controller.storage.users.get(message.user,function(err, user) {
+controller.hears(['call me (.*)'], 'message_received', function(bot, message) {
+    var matches = message.text.match(/call me (.*)/i);
+    var name = matches[1];
+    controller.storage.users.get(message.user, function(err, user) {
         if (!user) {
             user = {
                 id: message.user,
             };
         }
         user.name = name;
-        controller.storage.users.save(user,function(err, id) {
-            bot.reply(message,'Got it. I will call you ' + user.name + ' from now on.');
+        controller.storage.users.save(user, function(err, id) {
+            bot.reply(message, 'Got it. I will call you ' + user.name + ' from now on.');
         });
     });
 });
 
-controller.hears(['what is my name','who am i'],'direct_message,direct_mention,mention',function(bot, message) {
+controller.hears(['what is my name', 'who am i'], 'message_received', function(bot, message) {
 
-    controller.storage.users.get(message.user,function(err, user) {
+    controller.storage.users.get(message.user, function(err, user) {
         if (user && user.name) {
             bot.reply(message,'Your name is ' + user.name);
         } else {
@@ -174,10 +152,9 @@ controller.hears(['what is my name','who am i'],'direct_message,direct_mention,m
 });
 
 
-controller.hears(['shutdown'],'direct_message,direct_mention,mention',function(bot, message) {
+controller.hears(['shutdown'],'message_received',function(bot, message) {
 
     bot.startConversation(message,function(err, convo) {
-
         convo.ask('Are you sure you want me to shutdown?',[
             {
                 pattern: bot.utterances.yes,
@@ -202,12 +179,12 @@ controller.hears(['shutdown'],'direct_message,direct_mention,mention',function(b
 });
 
 
-controller.hears(['uptime','identify yourself','who are you','what is your name'],'direct_message,direct_mention,mention',function(bot, message) {
+controller.hears(['uptime','identify yourself','who are you','what is your name'],'message_received',function(bot, message) {
 
     var hostname = os.hostname();
     var uptime = formatUptime(process.uptime());
 
-    bot.reply(message,':robot_face: I am a bot named <@' + bot.identity.name + '>. I have been running for ' + uptime + ' on ' + hostname + '.');
+    bot.reply(message,'I am a bot! I have been running for ' + uptime + ' on ' + hostname + '.');
 
 });
 
