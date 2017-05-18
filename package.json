@@ -26,7 +26,6 @@
     "ws": "^2.2.2"
   },
   "devDependencies": {
-    "jest-cli": "^20.0.1",
     "jscs": "^3.0.7",
     "mocha": "^3.2.0",
     "should": "^11.2.1",
@@ -35,9 +34,8 @@
     "winston": "^2.3.1"
   },
   "scripts": {
-    "pretest": "jscs ./lib/ ./__test__",
-    "test": "jest",
-    "test-legacy": "mocha ./tests/*.js"
+    "pretest": "jscs ./lib/",
+    "test": "mocha tests/*.js"
   },
   "repository": {
     "type": "git",
@@ -57,8 +55,5 @@
     "microsoft bot framework"
   ],
   "author": "ben@howdy.ai",
-  "license": "MIT",
-  "jest": {
-    "testEnvironment": "node"
-  }
+  "license": "MIT"
 }
