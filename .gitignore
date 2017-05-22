@@ -11,4 +11,3 @@ examples/db_team_bot/
 .env
 .idea
 .vscode/settings.json
-coverage
