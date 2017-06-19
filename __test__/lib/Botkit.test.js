@@ -1,5 +1,3 @@
-'use strict';
-
 let botkit;
 
 jest.mock('../../lib/CoreBot', () => 'corebot');
