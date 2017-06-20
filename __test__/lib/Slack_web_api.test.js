@@ -1,5 +1,3 @@
-'use strict';
-
 let slackWebApi;
 let mockRequest;
 let mockResponse;
@@ -174,20 +172,7 @@ describe('postForm', () => {
             expect(cb).toHaveBeenCalledWith(error);
         });
 
-        test(`${methodName}: handles 429 response code`, () => {
-            mockRequest.post.mockImplementation((params, callback) => {
-                callback(null, { statusCode: 429 }, null);
-            });
-
-            method('some.action', 'data', cb);
-
-            expect(mockRequest.post).toHaveBeenCalledTimes(1);
-            expect(cb).toHaveBeenCalledTimes(1);
-            const firstArg = cb.mock.calls[0][0];
-            expect(firstArg.message).toBe('Rate limit exceeded');
-        });
-
-        test(`${methodName}: handles other response codes`, () => {
+        test(`${methodName}: handles non 200 response code`, () => {
             mockRequest.post.mockImplementation((params, callback) => {
                 callback(null, { statusCode: 400 }, null);
             });
@@ -221,7 +206,7 @@ describe('postForm', () => {
             method('some.action', 'data', cb);
 
             expect(mockRequest.post).toHaveBeenCalledTimes(1);
-            expect(cb).toHaveBeenCalledWith('not ok', { ok: false, error: 'not ok' });
+            expect(cb).toHaveBeenCalledWith('not ok', { ok: false, error: 'not ok'});
         });
     });
 });
@@ -234,7 +219,7 @@ describe('api methods', () => {
         instance = slackWebApi(mockBot, {});
         cb = jest.fn();
         jest.spyOn(instance, 'callAPI');
-        instance.callAPI.mockImplementation(() => { });
+        instance.callAPI.mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -268,41 +253,41 @@ describe('api methods', () => {
     describe('special cases', () => {
 
         test('chat.postMessage stringifies attachments', () => {
-            instance.chat.postMessage({ attachments: [] }, cb);
-            expect(instance.callAPI).toHaveBeenCalledWith('chat.postMessage', { attachments: '[]' }, cb);
+            instance.chat.postMessage({attachments: []}, cb);
+            expect(instance.callAPI).toHaveBeenCalledWith('chat.postMessage', {attachments: '[]'}, cb);
         });
 
         test('chat.postMessage handles attachments as Strings', () => {
             jest.spyOn(JSON, 'stringify');
-            instance.chat.postMessage({ attachments: 'string' }, cb);
-            expect(instance.callAPI).toHaveBeenCalledWith('chat.postMessage', { attachments: 'string' }, cb);
+            instance.chat.postMessage({attachments: 'string'}, cb);
+            expect(instance.callAPI).toHaveBeenCalledWith('chat.postMessage', {attachments: 'string'}, cb);
             expect(JSON.stringify).not.toHaveBeenCalled();
         });
 
         test('chat.postMessage handles attachments stringification errors', () => {
             const error = new Error('WHOOPSIE');
             jest.spyOn(JSON, 'stringify').mockImplementation(() => { throw error; });
-            instance.chat.postMessage({ attachments: [] }, cb);
+            instance.chat.postMessage({attachments: []}, cb);
             expect(instance.callAPI).toHaveBeenCalledWith('chat.postMessage', {}, cb);
             expect(JSON.stringify).toHaveBeenCalled();
         });
 
         test('chat.update stringifies attachments', () => {
-            instance.chat.update({ attachments: [] }, cb);
-            expect(instance.callAPI).toHaveBeenCalledWith('chat.update', { attachments: '[]' }, cb);
+            instance.chat.update({attachments: []}, cb);
+            expect(instance.callAPI).toHaveBeenCalledWith('chat.update', {attachments: '[]'}, cb);
         });
 
         test('chat.update handles attachments as Strings', () => {
             jest.spyOn(JSON, 'stringify');
-            instance.chat.update({ attachments: 'string' }, cb);
-            expect(instance.callAPI).toHaveBeenCalledWith('chat.update', { attachments: 'string' }, cb);
+            instance.chat.update({attachments: 'string'}, cb);
+            expect(instance.callAPI).toHaveBeenCalledWith('chat.update', {attachments: 'string'}, cb);
             expect(JSON.stringify).not.toHaveBeenCalled();
         });
 
         test('chat.postMessage handles attachments stringification errors', () => {
             const error = new Error('WHOOPSIE');
             jest.spyOn(JSON, 'stringify').mockImplementation(() => { throw error; });
-            instance.chat.update({ attachments: [] }, cb);
+            instance.chat.update({attachments: []}, cb);
             expect(instance.callAPI).toHaveBeenCalledWith('chat.update', {}, cb);
             expect(JSON.stringify).toHaveBeenCalled();
         });
