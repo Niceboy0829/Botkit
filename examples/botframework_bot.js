@@ -91,8 +91,6 @@ var bot = controller.spawn({
     appPassword: process.env.app_password
 });
 
-
-
 controller.setupWebserver(process.env.port || 3000, function(err, webserver) {
     controller.createWebhookEndpoints(webserver, bot, function() {
         console.log('ONLINE!');
@@ -121,10 +119,7 @@ controller.hears(['hello', 'hi'], 'message_received', function(bot, message) {
         if (user && user.name) {
             bot.reply(message, 'Hello ' + user.name + '!!');
         } else {
-            bot.reply(message, 'Hello.', function(err) {
-
-              console.error(err);
-            });
+            bot.reply(message, 'Hello.');
         }
     });
 });
