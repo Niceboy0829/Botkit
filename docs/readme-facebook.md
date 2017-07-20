@@ -20,7 +20,6 @@ Table of Contents
 * [Simulate typing](#simulate-typing)
 * [Silent and No Notifications](#silent-and-no-notifications)
 * [Messenger code API](#messenger-code-api)
-* [Attachment upload API](#attachment-upload-api)
 * [Running Botkit with an Express server](#use-botkit-for-facebook-messenger-with-an-express-web-server)
 
 ## Getting Started
@@ -91,6 +90,8 @@ All incoming events will contain the fields `user` and `channel`, both of which 
 
 `facebook_postback` events will contain a `payload` field.
 
+Notice also that `facebook_postback` events trigger the `message_received` event as well. That is why messages will have the `type` field as well. When the message is directly from the user (i.e. onlye `message_received` event) `type` will be set to `"user_message"` and when the message is originated in a `facebook_postback` then `type` will be set to `facebook_postback`.
+
 More information about the data found in these fields can be found [here](https://developers.facebook.com/docs/messenger-platform/webhook-reference).
 
 ## Working with Facebook Messenger
@@ -151,18 +152,22 @@ controller.hears(['cookies'], 'message_received', function(bot, message) {
 Facebook Messenger supports including "postback" buttons, which, when clicked,
 send a specialized `facebook_postback` event.
 
-In order to "hear" these events, bind a handler to the `facebook_postback` event.
-Developers may find it useful if button clicks are treated as "typed" messages.
+As an alternative to binding an event handler to the `facebook_postback` event,
+developers may find it useful if button clicks are treated as "typed" messages.
 This enables buttons to be more easily used as part of a conversation flow, and
 can reduce the complexity of the code necessary.
 
-```
-// receive a message whether it is typed or part of a button click
-controller.hears('hello','message_received,facebook_postback', function(bot,message) {
+Once enabled, the `payload` field of any postback button that is clicked will be
+treated as if the user typed the message, and will trigger any relevant `hears` triggers.
 
-  bot.reply(message, 'Got it!');
+To enable this option, pass in `{receive_via_postback: true}` to your Botkit Facebook controller, as below:
 
-});
+```javascript
+var controller = Botkit.facebookbot({
+        access_token: process.env.access_token,
+        verify_token: process.env.verify_token,
+        receive_via_postback: true,
+})
 ```
 
 ### Require Delivery Confirmation
@@ -501,38 +506,6 @@ controller.api.messenger_profile.get_target_audience(function (err, data)  {
 
 ```
 
-## Attachment upload API
-
-Attachment upload API allows you to upload an attachment that you may later send out to many users, without having to repeatedly upload the same data each time it is sent :
-
-
-```js
-var attachment = {
-        "type":"image",
-        "payload":{
-            "url":"https://pbs.twimg.com/profile_images/803642201653858305/IAW1DBPw_400x400.png",
-            "is_reusable": true
-        }
-    };
-
-    controller.api.attachment_upload.upload(attachment, function (err, attachmentId) {
-        if(err) {
-            // Error
-        } else {
-            var image = {
-                "attachment":{
-                    "type":"image",
-                    "payload": {
-                        "attachment_id": attachmentId
-                    }
-                }
-            };
-            bot.reply(message, image);
-        }
-    });
-
-```
-
 
 ## Use BotKit for Facebook Messenger with an Express web server
 Instead of the web server generated with setupWebserver(), it is possible to use a different web server to receive webhooks, as well as serving web pages.
@@ -552,7 +525,6 @@ Here is an example of [using an Express web server alongside BotKit for Facebook
   * [Slack](readme-slack.md)
   * [Cisco Spark](readme-ciscospark.md)
   * [Facebook Messenger](readme-facebook.md)
-  * [Twilio SMS](readme-twiliosms.md)
   * [Twilio IPM](readme-twilioipm.md)
   * [Microsoft Bot Framework](readme-botframework.md)
 * Contributing to Botkit
