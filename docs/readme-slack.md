@@ -846,14 +846,8 @@ controller.on('interactive_message_callback', function(bot, message) {
 ### Using Interactive Messages in Conversations
 
 It is possible to use interactive messages in conversations, with the `convo.ask` function.
-In order to do this, you must instantiate your Botkit controller with the `interactive_replies` option set to `true`:
 
-```javascript
-var controller = Botkit.slackbot({interactive_replies: true});
-```
-
-This will cause Botkit to pass all interactive_message_callback messages into the normal conversation
-system. When used in conjunction with `convo.ask`, expect the response text to match the button `value` field.
+When used in conjunction with `convo.ask`, expect the response text to match the button `value` field.
 
 ```javascript
 bot.startConversation(message, function(err, convo) {
@@ -912,6 +906,9 @@ bot.startConversation(message, function(err, convo) {
 The [Events API](https://api.slack.com/events-api) is a streamlined way to build apps and bots that respond to activities in Slack. You must setup a [Slack App](https://api.slack.com/slack-apps) to use Events API. Slack events are delivered to a secure webhook, and allows you to connect to slack without the RTM websocket connection.
 
 During development, a tool such as [localtunnel.me](http://localtunnel.me) is useful for temporarily exposing a compatible webhook url to Slack while running Botkit privately.
+
+Note: Currently [presence](https://api.slack.com/docs/presence) is not supported by Slack Events API, so bot users will appear offline, but will still function normally.
+Developers may want to create an RTM connection in order to make the bot appear online - see note below.
 
 ### To get started with the Events API:
 
