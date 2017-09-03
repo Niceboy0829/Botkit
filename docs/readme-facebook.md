@@ -84,18 +84,12 @@ Normal messages will be sent to your bot using the `message_received` event.  In
 | facebook_account_linking | a user has started the account linking
 | facebook_optin | a user has clicked the [Send-to-Messenger plugin](https://developers.facebook.com/docs/messenger-platform/implementation#send_to_messenger_plugin)
 | facebook_referral | a user has clicked on a [m.me URL with a referral param](https://developers.facebook.com/docs/messenger-platform/referral-params)
-| facebook_app_roles | This callback will occur when a page admin changes the role of your application.
-| facebook_standby | This callback will occur when a message has been sent to your page, but your application is not the current thread owner.
-| facebook_pass_thread_control | This callback will occur when thread ownership for a user has been passed to your application.
-| facebook_take_thread_control | This callback will occur when thread ownership for a user has been taken away from your application. 
 
 All incoming events will contain the fields `user` and `channel`, both of which represent the Facebook user's ID, and a `timestamp` field.
 
 `message_received` events will also contain either a `text` field or an `attachment` field.
 
 `facebook_postback` events will contain a `payload` field.
-
-Notice also that `facebook_postback` events trigger the `message_received` event as well. That is why messages will have the `type` field as well. When the message is directly from the user (i.e. onlye `message_received` event) `type` will be set to `"user_message"` and when the message is originated in a `facebook_postback` then `type` will be set to `facebook_postback`.
 
 More information about the data found in these fields can be found [here](https://developers.facebook.com/docs/messenger-platform/webhook-reference).
 
@@ -157,22 +151,18 @@ controller.hears(['cookies'], 'message_received', function(bot, message) {
 Facebook Messenger supports including "postback" buttons, which, when clicked,
 send a specialized `facebook_postback` event.
 
-As an alternative to binding an event handler to the `facebook_postback` event,
-developers may find it useful if button clicks are treated as "typed" messages.
+In order to "hear" these events, bind a handler to the `facebook_postback` event.
+Developers may find it useful if button clicks are treated as "typed" messages.
 This enables buttons to be more easily used as part of a conversation flow, and
 can reduce the complexity of the code necessary.
 
-Once enabled, the `payload` field of any postback button that is clicked will be
-treated as if the user typed the message, and will trigger any relevant `hears` triggers.
+```
+// receive a message whether it is typed or part of a button click
+controller.hears('hello','message_received,facebook_postback', function(bot,message) {
 
-To enable this option, pass in `{receive_via_postback: true}` to your Botkit Facebook controller, as below:
+  bot.reply(message, 'Got it!');
 
-```javascript
-var controller = Botkit.facebookbot({
-        access_token: process.env.access_token,
-        verify_token: process.env.verify_token,
-        receive_via_postback: true,
-})
+});
 ```
 
 ### Require Delivery Confirmation
@@ -577,44 +567,6 @@ var taggedMessage = {
 bot.reply(message, taggedMessage);
 ```
 
-## Handover Protocol
-
-The Messenger Platform handover protocol enables two or more applications to collaborate on the Messenger Platform for a Page.
-
-View the facebook [documentation](https://developers.facebook.com/docs/messenger-platform/handover-protocol) for more details.
-
-### Secondary Receivers List
-
-Allows the Primary Receiver app to retrieve the list of apps that are Secondary Receivers for a page. Only the app with the Primary Receiver role for the page may use this API.
-
-- To retrieve the list of Secondary Receivers :
-```javascript
-controller.api.handover.get_secondary_receivers_list('id,name', function (result) {
-   // result.data = list of Secondary Receivers
-});
-```
-
-### Take Thread Control
-
-Allows the Primary Receiver app to take control of a specific thread from a Secondary Receiver app. 
-
-- To thread control :
-```javascript
-controller.api.handover.take_thread_control('PSID', 'String to pass to the secondary receiver', function (result) {
-   // result = {"success":true}
-});
-```
-
-### Take Thread Control
-
-Allows you to pass thread control from your app to another app.
-
-- To pass thread control :
-```javascript
-controller.api.handover.pass_thread_control('PSID', '123456789', 'String to pass to the secondary receiver app', function (result) {
-   // result = {"success":true}
-});
-```
 
 ## Use BotKit for Facebook Messenger with an Express web server
 Instead of the web server generated with setupWebserver(), it is possible to use a different web server to receive webhooks, as well as serving web pages.
