@@ -1,3 +1,6 @@
+import * as express from 'express';
+import * as http from "http"
+
 declare namespace botkit {
   function botframeworkbot(configuration: BotFrameworkConfiguration): BotFrameworkController;
   function consolebot(configuration: ConsoleConfiguration): ConsoleController;
@@ -6,6 +9,7 @@ declare namespace botkit {
   function sparkbot(configuration: CiscoSparkConfiguration): CiscoSparkController;
   function twilioipmbot(configuration: TwilioIPMConfiguration): TwilioIPMController;
   function twiliosmsbot(configuration: TwilioSMSConfiguration): TwilioSMSController;
+  function socketbot(configuration: SocketConfiguration): SocketController;
   interface Bot<S, M extends Message> {
     readonly botkit: Controller<S, M, this>;
     readonly identity: Identity;
@@ -279,7 +283,7 @@ declare namespace botkit {
     createHomepageEndpoint(webserver: any): this;
     createOauthEndpoints(webserver: any, callback: (err: Error, req: any, res: any) => void): this;
     createWebhookEndpoints(webserver: any, authenticationTokens?: string[]): this;
-    setupWebserver(port: number | string, cb: (err: Error, webserver: any) => void): this;
+    setupWebserver();
     getAuthorizeURL(team_id: string, redirect_params: any): string;
   }
   interface SlackMessage extends Message {
@@ -485,6 +489,20 @@ declare namespace botkit {
   interface TwilioSMSMessage extends Message {
   }
   interface TwilioSMSSpawnConfiguration {
+  }
+  interface SocketBot extends Bot<SocketSpawnConfiguration, SocketMessage> {
+    send(src: SocketMessage, cb?: (err: Error, res: any) => void): void;
+    findConversation(message: SocketMessage, cb: (convo?: Conversation<SocketMessage>) => void): void;
+  }
+  interface SocketConfiguration extends Configuration {}
+  interface SocketController extends Controller<SocketSpawnConfiguration, SocketMessage, SocketBot> {
+    httpserver: http.Server;
+    webserver: express.Express;
+    openSocketServer(server: http.Server): void;
+  }
+  export interface SocketMessage extends Message {
+  }
+  interface SocketSpawnConfiguration {
   }
   interface User {
     id: string;
