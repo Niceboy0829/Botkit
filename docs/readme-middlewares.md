@@ -22,8 +22,7 @@ Storage middleware can be used for storing attributes about a user or channel or
 * [Postgres](#postgres)
 * [CouchDB](#couchdb)
 
-#### [Statistics](#statistics)
-* [Botkit Studio Metrics](#botkit-studio-metrics)
+### [Statistics](#statistics)
 * [Botmetrics](#botmetrics)
 * [Keen](#keen)
 
@@ -85,9 +84,6 @@ A Couchdb storage module for botkit
 
 
 # Statistics
-### Botkit Studio Metrics
-### [Project Page](https://github.com/howdyai/botkit-studio-metrics)
-This module enables the advanced analytics and extended metrics available in [Botkit Studio](https://www.botkit.ai).
 
 ## Botmetrics
 ### [Project Page](https://github.com/botmetrics/botkit-middleware-botmetrics)
