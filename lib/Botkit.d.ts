@@ -87,7 +87,7 @@ declare namespace botkit {
   interface ConsoleSpawnConfiguration {
   }
   interface Controller<S, M extends Message, B extends Bot<S, M>> {
-    readonly hears_regexp: HearsFunction<M>;
+    readonly changeEars: HearsFunction<M>;
     readonly log: {
       (...params: any[]): void;
     }
@@ -111,7 +111,6 @@ declare namespace botkit {
       teams: Storage<Team>;
     };
     readonly studio: Studio<S, M, B>;
-    changeEars(new_test: HearsFunction<M>): void;
     hears(keywords: string | string[] | RegExp | RegExp[], events: string | string[], cb: HearsCallback<S, M, B>): this;
     hears(keywords: string | string[] | RegExp | RegExp[], events: string | string[], middleware_or_cb: HearsFunction<M>, cb: HearsCallback<S, M, B>): this;
     on(event: string, cb: HearsCallback<S, M, B>): this;
@@ -146,7 +145,7 @@ declare namespace botkit {
     multiple?: boolean;
   }
   interface FacebookAttachment {
-    type: 'audio' | 'file' | 'image' | 'template' | 'video';
+    type: 'audio' | 'file' | 'image' | 'video';
     payload: any;
   }
   interface FacebookBot extends Bot<FacebookSpawnConfiguration, FacebookMessage> {
