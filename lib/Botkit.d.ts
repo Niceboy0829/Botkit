@@ -1,6 +1,3 @@
-import * as express from 'express';
-import * as http from "http"
-
 declare namespace botkit {
   function botframeworkbot(configuration: BotFrameworkConfiguration): BotFrameworkController;
   function consolebot(configuration: ConsoleConfiguration): ConsoleController;
@@ -9,7 +6,6 @@ declare namespace botkit {
   function sparkbot(configuration: CiscoSparkConfiguration): CiscoSparkController;
   function twilioipmbot(configuration: TwilioIPMConfiguration): TwilioIPMController;
   function twiliosmsbot(configuration: TwilioSMSConfiguration): TwilioSMSController;
-  function socketbot(configuration: SocketConfiguration): SocketController;
   interface Bot<S, M extends Message> {
     readonly botkit: Controller<S, M, this>;
     readonly identity: Identity;
@@ -91,7 +87,7 @@ declare namespace botkit {
   interface ConsoleSpawnConfiguration {
   }
   interface Controller<S, M extends Message, B extends Bot<S, M>> {
-    readonly changeEars: HearsFunction<M>;
+    readonly hears_regexp: HearsFunction<M>;
     readonly log: {
       (...params: any[]): void;
     }
@@ -115,6 +111,7 @@ declare namespace botkit {
       teams: Storage<Team>;
     };
     readonly studio: Studio<S, M, B>;
+    changeEars(new_test: HearsFunction<M>): void;
     hears(keywords: string | string[] | RegExp | RegExp[], events: string | string[], cb: HearsCallback<S, M, B>): this;
     hears(keywords: string | string[] | RegExp | RegExp[], events: string | string[], middleware_or_cb: HearsFunction<M>, cb: HearsCallback<S, M, B>): this;
     on(event: string, cb: HearsCallback<S, M, B>): this;
@@ -149,7 +146,7 @@ declare namespace botkit {
     multiple?: boolean;
   }
   interface FacebookAttachment {
-    type: 'audio' | 'file' | 'image' | 'video';
+    type: 'audio' | 'file' | 'image' | 'template' | 'video';
     payload: any;
   }
   interface FacebookBot extends Bot<FacebookSpawnConfiguration, FacebookMessage> {
@@ -490,20 +487,6 @@ declare namespace botkit {
   interface TwilioSMSMessage extends Message {
   }
   interface TwilioSMSSpawnConfiguration {
-  }
-  interface SocketBot extends Bot<SocketSpawnConfiguration, SocketMessage> {
-    send(src: SocketMessage, cb?: (err: Error, res: any) => void): void;
-    findConversation(message: SocketMessage, cb: (convo?: Conversation<SocketMessage>) => void): void;
-  }
-  interface SocketConfiguration extends Configuration {}
-  interface SocketController extends Controller<SocketSpawnConfiguration, SocketMessage, SocketBot> {
-    httpserver: http.Server;
-    webserver: express.Express;
-    openSocketServer(server: http.Server): void;
-  }
-  export interface SocketMessage extends Message {
-  }
-  interface SocketSpawnConfiguration {
   }
   interface User {
     id: string;
