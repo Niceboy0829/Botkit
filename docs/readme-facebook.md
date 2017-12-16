@@ -21,7 +21,7 @@ Table of Contents
 * [Silent and No Notifications](#silent-and-no-notifications)
 * [Messenger code API](#messenger-code-api)
 * [Attachment upload API](#attachment-upload-api)
-* [Messaging Insights API](#messaging-insights-api)
+* [Handover Protocol](#handover-protocol)
 * [Running Botkit with an Express server](#use-botkit-for-facebook-messenger-with-an-express-web-server)
 
 ## Getting Started
@@ -86,6 +86,10 @@ Normal messages will be sent to your bot using the `message_received` event.  In
 | facebook_account_linking | a user has started the account linking
 | facebook_optin | a user has clicked the [Send-to-Messenger plugin](https://developers.facebook.com/docs/messenger-platform/implementation#send_to_messenger_plugin)
 | facebook_referral | a user has clicked on a [m.me URL with a referral param](https://developers.facebook.com/docs/messenger-platform/referral-params)
+| facebook_app_roles | This callback will occur when a page admin changes the role of your application.
+| standby | This callback will occur when a message has been sent to your page, but your application is not the current thread owner.
+| facebook_receive_thread_control | This callback will occur when thread ownership for a user has been passed to your application.
+| facebook_lose_thread_control | This callback will occur when thread ownership for a user has been taken away from your application. 
 
 All incoming events will contain the fields `user` and `channel`, both of which represent the Facebook user's ID, and a `timestamp` field.
 
@@ -571,22 +575,42 @@ var taggedMessage = {
 bot.reply(message, taggedMessage);
 ```
 
-## Messaging Insights API
+## Handover Protocol
 
-The Messaging Insights API, allows you to programatically retrieve the same information that appears in the Page Insights tab of your Facebook Page.
+The Messenger Platform handover protocol enables two or more applications to collaborate on the Messenger Platform for a Page.
 
-To get insights with Botkit, you shuld call ```controller.api.insights.get_insights(...)``` with parameters metrics, since and until :
+View the facebook [documentation](https://developers.facebook.com/docs/messenger-platform/handover-protocol) for more details.
 
-| Parameter | Description
-|---  |---
-| metrics | An array or a comma-separated list of metrics to return.
-| since | UNIX timestamp of the start time to get the metric for.
-| until | UNIX timestamp of the end time to get the metric for.
+### Secondary Receivers List
 
+Allows the Primary Receiver app to retrieve the list of apps that are Secondary Receivers for a page. Only the app with the Primary Receiver role for the page may use this API.
+
+- To retrieve the list of Secondary Receivers :
 ```javascript
-controller.api.insights.get_insights('page_messages_active_threads_unique', null, null, function (err, body) {
-    console.log(body);
-    console.log(err);
+controller.api.handover.get_secondary_receivers_list('id,name', function (result) {
+   // result.data = list of Secondary Receivers
+});
+```
+
+### Take Thread Control
+
+The Primary Receiver app can take control of a specific thread from a Secondary Receiver app : 
+
+- To thread control :
+```javascript
+controller.api.handover.take_thread_control('<RECIPIENT_PSID>', 'String to pass to pass to the secondary receiver', function (result) {
+   // result = {"success":true}
+});
+```
+
+### Pass Thread Control
+
+To pass the thread control from your app to another app :
+
+- To pass thread control :
+```javascript
+controller.api.handover.pass_thread_control('<RECIPIENT_PSID>', '<TARGET_PSID>', 'String to pass to the secondary receiver app', function (result) {
+   // result = {"success":true}
 });
 ```
 
