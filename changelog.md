@@ -4,6 +4,24 @@
 
 [Want to contribute? Read our guide!](https://github.com/howdyai/botkit/blob/master/CONTRIBUTING.md)
 
+# 0.6.8
+
+BIG UPDATE:
+
+New Botkit Web Connector
+
+Merged PRS:
+
+https://github.com/howdyai/botkit/pull/1154
+https://github.com/howdyai/botkit/pull/1164
+https://github.com/howdyai/botkit/pull/1166
+https://github.com/howdyai/botkit/pull/1197
+https://github.com/howdyai/botkit/pull/1147
+https://github.com/howdyai/botkit/pull/1170
+https://github.com/howdyai/botkit/pull/978
+https://github.com/howdyai/botkit/pull/1171
+https://github.com/howdyai/botkit/pull/1180
+https://github.com/howdyai/botkit/pull/1183
 
 # 0.6.7
 
