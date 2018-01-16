@@ -299,7 +299,6 @@ controller.on('onChannelAdded', function(bot, message){
 * [Storing Information](storage.md)
 * [Logging](logging.md)
 * Platforms
-  * [Web and Apps](readme-web.md)
   * [Slack](readme-slack.md)
   * [Cisco Spark](readme-ciscospark.md)
   * [Microsoft Teams](readme-teams.md)
