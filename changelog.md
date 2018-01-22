@@ -4,6 +4,10 @@
 
 [Want to contribute? Read our guide!](https://github.com/howdyai/botkit/blob/master/CONTRIBUTING.md)
 
+# 0.6.9
+
+* Fix for Botkit Studio scripts which used "end and mark successful" action from a condition. Previously this would end, but not mark successful.
+
 # 0.6.8
 
 BIG UPDATE:
