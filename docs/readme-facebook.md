@@ -610,7 +610,7 @@ Allows the Primary Receiver app to retrieve the list of apps that are Secondary 
 
 - To retrieve the list of Secondary Receivers:
 ```javascript
-controller.api.handover.get_secondary_receivers_list('id,name', function (result) {
+controller.api.handover.get_secondary_receivers_list('id,name', function (err, result) {
    // result.data = list of Secondary Receivers
 });
 ```
@@ -704,6 +704,22 @@ On success, Botkit will return a numeric broadcast_id that can be used to identi
 
 ```javascript
 controller.api.broadcast.send('<CREATIVE_ID>', null, function (err, body) {
+    // Your awesome code here
+    console.log(body['broadcast_id']);
+    // And here
+});
+```
+
+If you would like to add notification type and tag you can pass an object:
+
+```javascript
+var message = {
+    message_creative_id: '<CREATIVE_ID>',
+    notification_type: '<REGULAR | SILENT_PUSH | NO_PUSH>',
+    tag: '<MESSAGE_TAG>'
+}
+
+controller.api.broadcast.send(message, null, function (err, body) {
     // Your awesome code here
     console.log(body['broadcast_id']);
     // And here
