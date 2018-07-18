@@ -10,12 +10,23 @@ Botkit offers everything you need to design, build and operate an app:
 
 * Easy-to-extend starter kits
 * Fully-featured SDK with support for all major platforms
+* Content management and design tools (with [Botkit Studio](https://studio.botkit.ai))
+* Built-in analytics and CRM tools (with [Botkit Studio](https://studio.botkit.ai))
 * [Tons of plugins and middlewares](https://botkit.ai/docs/readme-middlewares.html)
 
 Plus, Botkit works with all the NLP services (like Microsoft LUIS and IBM Watson), can use any type of database you want, and runs on almost any hosting platform.
 
 # Install Botkit
 Botkit is a Node.js module, and works with Node and npm.
+
+### **Botkit Studio**
+
+Botkit Studio is a dashboard and IDE designed to super-charge Botkit. It includes a web-based interface for building and managing dialog, an activity console, third party integrations, and advanced analytics tools like customer segmenting, conversion funnels, and user retention metrics.
+
+Sign up for a free Botkit Studio account, and it will guide you through the process to create, configure and deploy your Botkit app!
+
+**[![Sign up for Botkit Studio](https://botkit.ai/docs/studio.png)](https://studio.botkit.ai/signup?code=readme)**
+
 
 ### **Remix on Glitch**
 
@@ -157,21 +168,6 @@ controller.middleware.send.use(function(bot, message, next) {
 * Contributing to Botkit
   * [Contributing to Botkit Core](CONTRIBUTING.md)
   * [Building platform connectors](https://botkit.ai/docs/howto/build_connector.html)
-
-# Support Botkit
-
-## Platform Sponsors
-
-[![Platform Sponsors](https://opencollective.com/botkit/tiers/platform-sponsor.svg?avatarHeight=100&width=600)](https://opencollective.com/botkit)
-
-## Corporate Sponsors
-
-[![Corporate Sponsors](https://opencollective.com/botkit/tiers/corporate-sponsor.svg?avatarHeight=50&width=600)](https://opencollective.com/botkit)
-
-## Individual Contributors
-
-[![Individual Contributors](https://opencollective.com/botkit/tiers/individual-sponsor.svg?avatarHeight=50&width=600)](https://opencollective.com/botkit)
-
 
 # Community & Support
 
