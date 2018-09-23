@@ -12,7 +12,6 @@ jest.mock('../../lib/CiscoSparkbot', () => 'spark');
 jest.mock('../../lib/ConsoleBot', () => 'console');
 jest.mock('../../lib/Web', () => 'anywhere');
 jest.mock('../../lib/Teams', () => 'teams');
-jest.mock('../../lib/GoogleHangoutsBot', () => 'googlehangoutsbot');
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -30,6 +29,5 @@ test('exports bot interfaces', () => {
     expect(botkit.teamsbot).toBe('teams');
     expect(botkit.consolebot).toBe('console');
     expect(botkit.anywhere).toBe('anywhere');
-    expect(botkit.googlehangoutsbot).toBe('googlehangoutsbot');
 
 });
