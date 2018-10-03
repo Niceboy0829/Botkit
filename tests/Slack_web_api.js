@@ -1,5 +1,5 @@
 var should = require('should');
-var Botkit = require('../../');
+var Botkit = require('../');
 var path = require('path');
 var tmpdir = require('os').tmpdir();
 var fs = require('fs');
@@ -30,8 +30,6 @@ describe('Botkit', function() {
     });
 
     it('should start and then stop', function(done) {
-        this.timeout(5000);
-
         var controller = Botkit.slackbot({debug: false});
         var openIsCalled = false;
 
@@ -51,11 +49,10 @@ describe('Botkit', function() {
             .spawn({
                 token: token
             })
-            .startRTM(function(err) {
+            .startRTM(function(err, bot, payload) {
                 (err === null).should.be.true;
-            })
-            .closeRTM(function(err) {
-                (err === null).should.be.true;
+                should.exist(bot);
+                bot.closeRTM();
             });
     });
 
