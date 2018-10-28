@@ -117,10 +117,8 @@ describe('callApiWithoutToken', () => {
         };
         const cb = jest.fn();
 
-        /*
-         * this seems to be an API inconsistency:
-         * callAPIWithoutToken uses bot.config, but callAPI uses that passed config
-         */
+        // this seems to be an API inconsistency:
+        // callAPIWithoutToken uses bot.config, but callAPI uses that passed config
         mockBot.config = config;
 
         instance = slackWebApi(mockBot, {});
@@ -146,7 +144,7 @@ describe('postForm', () => {
             cb = jest.fn();
         });
 
-        test(`${ methodName }: handles success`, () => {
+        test(`${methodName}: handles success`, () => {
             method('some.action', 'data', cb);
             expect(mockRequest.post).toHaveBeenCalledTimes(1);
             const firstArg = mockRequest.post.mock.calls[0][0];
@@ -159,12 +157,12 @@ describe('postForm', () => {
             expect(cb).toHaveBeenCalledWith(null, { ok: true });
         });
 
-        test(`${ methodName }: defaults callback`, () => {
+        test(`${methodName}: defaults callback`, () => {
             method('some.action', 'data');
             expect(mockRequest.post).toHaveBeenCalledTimes(1);
         });
 
-        test(`${ methodName }: handles request lib error`, () => {
+        test(`${methodName}: handles request lib error`, () => {
             const error = new Error('WHOOPS!');
             mockRequest.post.mockImplementation((params, callback) => {
                 callback(error, null, null);
@@ -176,7 +174,7 @@ describe('postForm', () => {
             expect(cb).toHaveBeenCalledWith(error);
         });
 
-        test(`${ methodName }: handles 429 response code`, () => {
+        test(`${methodName}: handles 429 response code`, () => {
             mockRequest.post.mockImplementation((params, callback) => {
                 callback(null, { statusCode: 429 }, null);
             });
@@ -189,7 +187,7 @@ describe('postForm', () => {
             expect(firstArg.message).toBe('Rate limit exceeded');
         });
 
-        test(`${ methodName }: handles other response codes`, () => {
+        test(`${methodName}: handles other response codes`, () => {
             mockRequest.post.mockImplementation((params, callback) => {
                 callback(null, { statusCode: 400 }, null);
             });
@@ -202,7 +200,7 @@ describe('postForm', () => {
             expect(firstArg.message).toBe('Invalid response');
         });
 
-        test(`${ methodName }: handles error parsing body`, () => {
+        test(`${methodName}: handles error parsing body`, () => {
             mockRequest.post.mockImplementation((params, callback) => {
                 callback(null, { statusCode: 200 }, '{');
             });
@@ -215,7 +213,7 @@ describe('postForm', () => {
             expect(firstArg).toBeInstanceOf(Error);
         });
 
-        test(`${ methodName }: handles ok.false response`, () => {
+        test(`${methodName}: handles ok.false response`, () => {
             mockRequest.post.mockImplementation((params, callback) => {
                 callback(null, { statusCode: 200 }, '{ "ok": false, "error": "not ok"}');
             });
