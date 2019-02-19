@@ -85,7 +85,6 @@ class BotkitPluginLoader {
         debug('Plugin Enabled: ', name);
     }
     publicFolder(alias, path) {
-        debug('Make folder public: ', path, 'at alias', alias);
         this.botkit.webserver.use(alias, express.static(path));
     }
     localView(path_to_view) {
