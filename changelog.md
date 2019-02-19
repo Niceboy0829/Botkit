@@ -12,15 +12,6 @@
 * Google Hangouts: [allow to consume auth data from env var instead of file](https://github.com/howdyai/botkit/pull/1543)
 * Pull requests will now trigger Travis builds
 
-
-# 0.7.2
-
-Update dependency on `request` to latest to fix security warnings in dependency tree.
-
-# 0.7.1
-
-Update dependency on `botbuilder` to `3.16` to fix security warnings in dependency tree.
-
 # 0.7.0
 
 This release is the first major step towards [deprecating Botkit Studio](https://github.com/howdyai/botkit/issues/1534),
@@ -138,7 +129,7 @@ Support for Slack's new security feature:
 
 * Fix for require_delivery option in Facebook bots. [PR #1312](https://github.com/howdyai/botkit/pull/1312)
 
-* Errors encountered during Slack RTM connection process will now be reprorted to the callback function [PR #1335](https://github.com/howdyai/botkit/pull/1335)
+* Errors encountered during Slack RTM connection process will now be reported to the callback function [PR #1335](https://github.com/howdyai/botkit/pull/1335)
 
 * Updated methodology used to validate email addresses when restricting access to Cisco Spark bots
 
@@ -696,7 +687,7 @@ Improves Slack RTM reconnects thanks to @selfcontained [PR #274](https://github.
 
 ## 0.2
 
-Adds support for Twilio IP Messenging bots
+Adds support for Twilio IP Messaging bots
 
 Add example bot: twilio_ipm_bot.js
 
