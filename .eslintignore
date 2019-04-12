@@ -1,1 +1,2 @@
-packages/testbot
+node_modules
+coverage
