@@ -3,6 +3,8 @@
  */
 import { Botkit, BotkitMessage } from './core';
 import { Activity, ConversationAccount, ConversationReference, ConversationParameters, TurnContext } from 'botbuilder';
+import { WaterfallDialog } from 'botbuilder-dialogs';
+import { stringify } from 'querystring';
 
 /**
  * A base class for a `bot` instance, an object that contains the information and functionality for taking action in response to an incoming message.
@@ -91,7 +93,7 @@ export class BotWorker {
      * @param message A string containing the text of a reply, or more fully formed message object
      * @returns Return value will contain the results of the send action, typically `{id: <id of message>}`
      */
-    public async say(message: Partial<BotkitMessage> | string): Promise<any> {
+    public async say(message: Partial<BotkitMessage>): Promise<any> {
         return new Promise((resolve, reject) => {
             let activity = this.ensureMessageFormat(message);
 
@@ -122,7 +124,7 @@ export class BotWorker {
     * @param resp A string containing the text of a reply, or more fully formed message object
     * @returns Return value will contain the results of the send action, typically `{id: <id of message>}`
     */
-    public async reply(src: Partial<BotkitMessage>, resp: Partial<BotkitMessage> | string): Promise<any> {
+    public async reply(src: Partial<BotkitMessage>, resp: Partial<BotkitMessage>): Promise<any> {
         let activity = this.ensureMessageFormat(resp);
 
         // Get conversation reference from src
@@ -147,7 +149,12 @@ export class BotWorker {
      */
     public async beginDialog(id: string, options?: any): Promise<void> {
         if (this._config.dialogContext) {
-            await this._config.dialogContext.beginDialog(id, options);
+
+            await this._config.dialogContext.beginDialog(id +':botkit-wrapper', {
+                user: this.getConfig('context').activity.from.id,
+                channel: this.getConfig('context').activity.conversation.id,
+                ...options
+            });
 
             // make sure we save the state change caused by the dialog.
             // this may also get saved again at end of turn
@@ -156,6 +163,37 @@ export class BotWorker {
             throw new Error('Call to beginDialog on a bot that did not receive a dialogContext during spawn');
         }
     }
+
+    /**
+     * Replace any active dialogs with a new a pre-defined dialog by specifying its id. The dialog will be started in the same context (same user, same channel) in which the original incoming message was received.
+     * [See "Using Dialogs" in the core documentation.](../index.md#using-dialogs)
+     *
+     * ```javascript
+     * controller.hears('hello', 'message', async(bot, message) => {
+     *      await bot.replaceDialog(GREETINGS_DIALOG);
+     * });
+     * ```
+     * @param id id of dialog
+     * @param options object containing options to be passed into the dialog
+     */
+     public async replaceDialog(id: string, options?: any): Promise<void> {
+         if (this._config.dialogContext) {
+
+            await this._config.dialogContext.replaceDialog(id +':botkit-wrapper', {
+                user: this.getConfig('context').activity.from.id,
+                channel: this.getConfig('context').activity.conversation.id,
+                ...options
+            });
+
+            // make sure we save the state change caused by the dialog.
+            // this may also get saved again at end of turn
+            await this._controller.saveState(this);
+        } else {
+            throw new Error('Call to beginDialog on a bot that did not receive a dialogContext during spawn');
+        }
+     }
+   
+    // TODO: cancel dialogs
 
     /**
      * Alter the context in which a bot instance will send messages.
@@ -253,7 +291,7 @@ export class BotWorker {
      * @params message a string or partial outgoing message object
      * @returns a properly formed Activity object
      */
-    public ensureMessageFormat(message: Partial<BotkitMessage> | string): Partial<Activity> {
+    public ensureMessageFormat(message: Partial<BotkitMessage>): Partial<Activity> {
         let activity: Partial<Activity> = {};
 
         if (typeof (message) === 'string') {
