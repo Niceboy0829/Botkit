@@ -241,7 +241,7 @@ export class SlackBotWorker extends BotWorker {
             let msg = this.ensureMessageFormat(resp);
             // @ts-ignore
             msg.conversation = {
-                id: src.channel
+                id: src.channnel
             };
             msg.channelData.to = src.user;
 
