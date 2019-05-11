@@ -514,8 +514,7 @@ export class SlackAdapter extends BotAdapter {
 
                 context.turnState.set('httpStatus', 200);
 
-                await this.runMiddleware(context, logic)
-                    .catch((err) => { throw err; });
+                await this.runMiddleware(context, logic);
 
                 // send http response back
                 res.status(context.turnState.get('httpStatus'));
@@ -526,7 +525,6 @@ export class SlackAdapter extends BotAdapter {
                 }
             }
         } else if (event.type === 'event_callback') {
-
             // this is an event api post
             if (this.options.verificationToken && event.token !== this.options.verificationToken) {
                 console.error('Rejected due to mismatched verificationToken:', event);
@@ -534,11 +532,11 @@ export class SlackAdapter extends BotAdapter {
                 res.end();
             } else {
                 const activity = {
-                    id: event.event.ts ? event.event.ts : event.event.event_ts,
+                    id: event.event.ts,
                     timestamp: new Date(),
                     channelId: 'slack',
                     conversation: {
-                        id: event.event.channel ? event.event.channel : event.event.channel_id,
+                        id: event.event.channel,
                         thread_ts: event.event.thread_ts
                     },
                     from: { id: event.event.bot_id ? event.event.bot_id : event.event.user }, // TODO: bot_messages do not have a user field
@@ -547,18 +545,6 @@ export class SlackAdapter extends BotAdapter {
                     text: null,
                     type: ActivityTypes.Event
                 };
-
-                if (!activity.conversation.id) {
-
-                    // uhoh! this doesn't have a conversation id because it might have occurred outside a channel.
-                    // or be in reference to an item in a channel.
-                    if (event.event.item && event.event.item.channel) {
-                        activity.conversation.id = event.event.item.channel;
-                    } else {
-                        activity.conversation.id = event.team_id;
-                    }
-
-                }
 
                 // @ts-ignore this complains because of extra fields in conversation
                 activity.recipient.id = await this.getBotUserByTeam(activity as Activity);
@@ -576,19 +562,13 @@ export class SlackAdapter extends BotAdapter {
                     activity.text = event.event.text;
                 }
 
-                if (!activity.conversation.id) {
-                    console.error('Got Slack activity without a conversation id', event);
-                    return;
-                }
-
                 // create a conversation reference
                 // @ts-ignore
                 const context = new TurnContext(this, activity as Activity);
 
                 context.turnState.set('httpStatus', 200);
 
-                await this.runMiddleware(context, logic)
-                    .catch((err) => { throw err; });
+                await this.runMiddleware(context, logic);
 
                 // send http response back
                 res.status(context.turnState.get('httpStatus'));
@@ -636,8 +616,7 @@ export class SlackAdapter extends BotAdapter {
 
                 context.turnState.set('httpStatus', 200);
 
-                await this.runMiddleware(context, logic)
-                    .catch((err) => { throw err; });
+                await this.runMiddleware(context, logic);
 
                 // send http response back
                 res.status(context.turnState.get('httpStatus'));

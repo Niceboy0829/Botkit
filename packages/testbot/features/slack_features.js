@@ -11,18 +11,6 @@ module.exports = function(controller) {
             }
         });
 
-        controller.on('reaction_added', async(bot, message) => {
-            await bot.reply(message,'Cool emoji');
-        });
-        
-        controller.on('member_joined_channel', async(bot, message) => {
-            await bot.reply(message, `Welcome hume!`);
-        });
-
-        controller.on('app_mention', async(bot, message) => {
-            await bot.reply(message, `Got an app_mention!`);
-        })
-
         controller.hears('dm me', 'message', async(bot, message) => {
             await bot.startPrivateConversation(message.user);
             await bot.say(`Let's talk in private.`);
