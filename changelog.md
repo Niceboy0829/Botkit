@@ -4,10 +4,9 @@
 
 [Want to contribute? Read our guide!](https://github.com/howdyai/botkit/blob/master/CONTRIBUTING.md)
 
-# Sub-package release notes
+# 4.0.2
 
-* [botbuilder-adapter-web v1.0.2](packages/botbuilder-adapter-web/CHANGELOG.md#102)
-* [botbuilder-adapter-slack v1.0.2](packages/botbuilder-adapter-slack/CHANGELOG.md#102)
+* Fix an issue where the convo.before hook would not fire as expected in some circumstances
 
 # 4.0.1
 

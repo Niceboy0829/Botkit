@@ -180,6 +180,7 @@ export class WebAdapter extends BotAdapter {
             });
         }
 
+        debug('OUTGOING > ', message);
         return message;
     }
     /**
@@ -200,7 +201,7 @@ export class WebAdapter extends BotAdapter {
             if (channel === 'websocket') {
                 // If this turn originated with a websocket message, respond via websocket
                 var ws = clients[activity.recipient.id];
-                if (ws && ws.readyState === 1) {
+                if (ws) {
                     try {
                         ws.send(JSON.stringify(message));
                     } catch (err) {
@@ -307,7 +308,7 @@ export class WebAdapter extends BotAdapter {
     }
 
     /**
-     * Is given user currently connected? Use this to test the websocket connection 
+     * Is given user currently connected? Use this to test the websocket connection
      * between the bot and a given user before sending messages,
      * particularly in cases where a long period of time may have passed.
      *
