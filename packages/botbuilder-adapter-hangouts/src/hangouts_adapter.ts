@@ -327,7 +327,8 @@ export class HangoutsAdapter extends BotAdapter {
                 context.turnState.set('httpStatus', 200);
             }
 
-            await this.runMiddleware(context, logic);
+            await this.runMiddleware(context, logic)
+                .catch((err) => { throw err; });
 
             if (event.type === 'CARD_CLICKED') {
                 // send http response back

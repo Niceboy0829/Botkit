@@ -395,7 +395,8 @@ export class FacebookAdapter extends BotAdapter {
         }
 
         const context = new TurnContext(this, activity as Activity);
-        await this.runMiddleware(context, logic);
+        await this.runMiddleware(context, logic)
+            .catch((err) => { throw err; });
     }
 
     /*

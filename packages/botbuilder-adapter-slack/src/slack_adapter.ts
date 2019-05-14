@@ -514,7 +514,8 @@ export class SlackAdapter extends BotAdapter {
 
                 context.turnState.set('httpStatus', 200);
 
-                await this.runMiddleware(context, logic);
+                await this.runMiddleware(context, logic)
+                    .catch((err) => { throw err; });
 
                 // send http response back
                 res.status(context.turnState.get('httpStatus'));
@@ -568,7 +569,8 @@ export class SlackAdapter extends BotAdapter {
 
                 context.turnState.set('httpStatus', 200);
 
-                await this.runMiddleware(context, logic);
+                await this.runMiddleware(context, logic)
+                    .catch((err) => { throw err; });
 
                 // send http response back
                 res.status(context.turnState.get('httpStatus'));
@@ -616,7 +618,8 @@ export class SlackAdapter extends BotAdapter {
 
                 context.turnState.set('httpStatus', 200);
 
-                await this.runMiddleware(context, logic);
+                await this.runMiddleware(context, logic)
+                    .catch((err) => { throw err; });
 
                 // send http response back
                 res.status(context.turnState.get('httpStatus'));
