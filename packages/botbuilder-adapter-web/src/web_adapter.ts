@@ -180,7 +180,6 @@ export class WebAdapter extends BotAdapter {
             });
         }
 
-        debug('OUTGOING > ', message);
         return message;
     }
     /**
@@ -307,7 +306,7 @@ export class WebAdapter extends BotAdapter {
     }
 
     /**
-     * Is given user currently connected? Use this to test the websocket connection
+     * Is given user currently connected? Use this to test the websocket connection 
      * between the bot and a given user before sending messages,
      * particularly in cases where a long period of time may have passed.
      *
