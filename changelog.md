@@ -4,6 +4,24 @@
 
 [Want to contribute? Read our guide!](https://github.com/howdyai/botkit/blob/master/CONTRIBUTING.md)
 
+# 4.0.2
+
+* Fix Typerscript signature of controller.spawn() - https://github.com/howdyai/botkit/pull/1648
+* Fix for allowing typing messages in dialogs - https://github.com/howdyai/botkit/issues/1646
+* Remove useless try/catch blocks - https://github.com/howdyai/botkit/pull/1654 
+* Fix an issue where the convo.before hook would not fire as expected when looping a thread.
+
+
+# Sub-package release notes
+
+* [botbuilder-adapter-web v1.0.3](packages/botbuilder-adapter-web/CHANGELOG.md#103)
+* [botbuilder-adapter-slack v1.0.3](packages/botbuilder-adapter-slack/CHANGELOG.md#103)
+* [botbuilder-adapter-webex v1.0.1](packages/botbuilder-adapter-webex/CHANGELOG.md#101)
+* [botkit-plugin-cms v1.0.1](packages/botkit-plugin-cms/CHANGELOG.md#101)
+
+
+
+
 # Sub-package release notes
 
 * [botbuilder-adapter-web v1.0.2](packages/botbuilder-adapter-web/CHANGELOG.md#102)
