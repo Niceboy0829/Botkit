@@ -44,7 +44,7 @@ interface BotkitMessageTemplate {
     attachments?: any[];
     channelData?: any;
     collect: {
-        key: string;
+        key?: string;
         options?: BotkitConvoTrigger[];
     };
 }
@@ -329,7 +329,7 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
      * @param handlers one or more handler functions defining possible conditional actions based on the response to the question.
      * @param key name of variable to store response in.
      */
-    public ask(message: Partial<BotkitMessageTemplate> | string, handlers: BotkitConvoTrigger | BotkitConvoTrigger[], key: {key: string} | string): BotkitConversation {
+    public ask(message: Partial<BotkitMessageTemplate> | string, handlers: BotkitConvoTrigger | BotkitConvoTrigger[], key: {key: string} | string | null): BotkitConversation {
         this.addQuestion(message, handlers, key, 'default');
         return this;
     }
@@ -343,7 +343,7 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
      * @param key Name of variable to store response in.
      * @param thread_name Name of thread to which message will be added
      */
-    public addQuestion(message: Partial<BotkitMessageTemplate> | string, handlers: BotkitConvoTrigger | BotkitConvoTrigger[], key: {key: string} | string, thread_name: string): BotkitConversation {
+    public addQuestion(message: Partial<BotkitMessageTemplate> | string, handlers: BotkitConvoTrigger | BotkitConvoTrigger[], key: {key: string} | string | null, thread_name: string): BotkitConversation {
         if (!thread_name) {
             thread_name = 'default';
         }
@@ -356,9 +356,13 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
             message = { text: [message as string] };
         }
 
-        message.collect = {
-            key: typeof (key) === 'string' ? key : key.key
-        };
+        message.collect = {};
+
+        if (key) {
+            message.collect = {
+                key: typeof (key) === 'string' ? key : key.key
+            };
+        }
 
         if (Array.isArray(handlers)) {
             message.collect.options = handlers;
