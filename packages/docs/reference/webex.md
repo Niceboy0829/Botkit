@@ -220,7 +220,7 @@ This class includes the following methods:
 
 | Name | Type | Description
 |--- |--- |---
-| api | Webex | An instance of the [webex api client](https://www.npmjs.com/package/webex)
+| api | Ciscospark | An instance of the [webex api client](https://www.npmjs.com/package/ciscospark)
 
 ## WebexBotWorker Class Methods
 <a name="deleteMessage"></a>

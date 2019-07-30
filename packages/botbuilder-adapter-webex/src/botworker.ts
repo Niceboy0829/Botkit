@@ -7,7 +7,7 @@
  */
 
 import { BotWorker, BotkitMessage } from 'botkit';
-import * as Webex from 'webex';
+import * as Ciscospark from 'ciscospark';
 
 /**
  * This is a specialized version of [Botkit's core BotWorker class](core.md#BotWorker) that includes additional methods for interacting with Webex Teams.
@@ -17,9 +17,9 @@ import * as Webex from 'webex';
  */
 export class WebexBotWorker extends BotWorker {
     /**
-     * An instance of the [webex api client](https://www.npmjs.com/package/webex)
+     * An instance of the [webex api client](https://www.npmjs.com/package/ciscospark)
      */
-    public api: Webex;
+    public api: Ciscospark;
 
     /**
      * Change the context of the _next_ message
