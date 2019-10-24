@@ -9316,8 +9316,7 @@
               "kindString": "Property",
               "flags": {
                 "isExported": true,
-                "isExternal": true,
-                "isOptional": true
+                "isExternal": true
               },
               "comment": {
                 "shortText": "An array of middlewares that will be automatically bound to the webserver.\nShould be in the form (req, res, next) => {}"
@@ -9609,8 +9608,7 @@
               "kindString": "Property",
               "flags": {
                 "isExported": true,
-                "isExternal": true,
-                "isOptional": true
+                "isExternal": true
               },
               "comment": {
                 "shortText": "An array of middlewares that will be automatically bound to the webserver.\nShould be in the form (req, res, next) => {}"
@@ -11193,11 +11191,13 @@
                 }
               ],
               "type": {
-                "type": "array",
-                "elementType": {
-                  "type": "intrinsic",
-                  "name": "any"
-                }
+                "type": "tuple",
+                "elements": [
+                  {
+                    "type": "intrinsic",
+                    "name": "any"
+                  }
+                ]
               }
             },
             {
@@ -11508,11 +11508,13 @@
                 }
               ],
               "type": {
-                "type": "array",
-                "elementType": {
-                  "type": "intrinsic",
-                  "name": "any"
-                }
+                "type": "tuple",
+                "elements": [
+                  {
+                    "type": "intrinsic",
+                    "name": "any"
+                  }
+                ]
               }
             },
             {
@@ -13700,7 +13702,7 @@
               ]
             },
             {
-              "id": 55,
+              "id": 52,
               "name": "continueConversation",
               "kind": 2048,
               "kindString": "Method",
@@ -13711,7 +13713,7 @@
               },
               "signatures": [
                 {
-                  "id": 56,
+                  "id": 53,
                   "name": "continueConversation",
                   "kind": 4096,
                   "kindString": "Call signature",
@@ -13721,7 +13723,7 @@
                   },
                   "parameters": [
                     {
-                      "id": 57,
+                      "id": 54,
                       "name": "reference",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -13741,7 +13743,7 @@
                       }
                     },
                     {
-                      "id": 58,
+                      "id": 55,
                       "name": "logic",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -13752,21 +13754,21 @@
                       "type": {
                         "type": "reflection",
                         "declaration": {
-                          "id": 59,
+                          "id": 56,
                           "name": "__type",
                           "kind": 65536,
                           "kindString": "Type literal",
                           "flags": {},
                           "signatures": [
                             {
-                              "id": 60,
+                              "id": 57,
                               "name": "__call",
                               "kind": 4096,
                               "kindString": "Call signature",
                               "flags": {},
                               "parameters": [
                                 {
-                                  "id": 61,
+                                  "id": 58,
                                   "name": "context",
                                   "kind": 32768,
                                   "kindString": "Parameter",
@@ -13792,7 +13794,7 @@
                           "sources": [
                             {
                               "fileName": "webex_adapter.ts",
-                              "line": 441,
+                              "line": 382,
                               "character": 87
                             }
                           ]
@@ -13815,13 +13817,13 @@
               "sources": [
                 {
                   "fileName": "webex_adapter.ts",
-                  "line": 441,
+                  "line": 382,
                   "character": 37
                 }
               ]
             },
             {
-              "id": 51,
+              "id": 48,
               "name": "deleteActivity",
               "kind": 2048,
               "kindString": "Method",
@@ -13832,7 +13834,7 @@
               },
               "signatures": [
                 {
-                  "id": 52,
+                  "id": 49,
                   "name": "deleteActivity",
                   "kind": 4096,
                   "kindString": "Call signature",
@@ -13842,7 +13844,7 @@
                   },
                   "parameters": [
                     {
-                      "id": 53,
+                      "id": 50,
                       "name": "context",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -13856,7 +13858,7 @@
                       }
                     },
                     {
-                      "id": 54,
+                      "id": 51,
                       "name": "reference",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -13891,7 +13893,7 @@
               "sources": [
                 {
                   "fileName": "webex_adapter.ts",
-                  "line": 423,
+                  "line": 364,
                   "character": 31
                 }
               ]
@@ -13984,7 +13986,7 @@
               ]
             },
             {
-              "id": 62,
+              "id": 59,
               "name": "processActivity",
               "kind": 2048,
               "kindString": "Method",
@@ -13995,7 +13997,7 @@
               },
               "signatures": [
                 {
-                  "id": 63,
+                  "id": 60,
                   "name": "processActivity",
                   "kind": 4096,
                   "kindString": "Call signature",
@@ -14005,7 +14007,7 @@
                   },
                   "parameters": [
                     {
-                      "id": 64,
+                      "id": 61,
                       "name": "req",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14019,7 +14021,7 @@
                       }
                     },
                     {
-                      "id": 65,
+                      "id": 62,
                       "name": "res",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14033,7 +14035,7 @@
                       }
                     },
                     {
-                      "id": 66,
+                      "id": 63,
                       "name": "logic",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14044,21 +14046,21 @@
                       "type": {
                         "type": "reflection",
                         "declaration": {
-                          "id": 67,
+                          "id": 64,
                           "name": "__type",
                           "kind": 65536,
                           "kindString": "Type literal",
                           "flags": {},
                           "signatures": [
                             {
-                              "id": 68,
+                              "id": 65,
                               "name": "__call",
                               "kind": 4096,
                               "kindString": "Call signature",
                               "flags": {},
                               "parameters": [
                                 {
-                                  "id": 69,
+                                  "id": 66,
                                   "name": "context",
                                   "kind": 32768,
                                   "kindString": "Parameter",
@@ -14084,7 +14086,7 @@
                           "sources": [
                             {
                               "fileName": "webex_adapter.ts",
-                              "line": 458,
+                              "line": 399,
                               "character": 49
                             }
                           ]
@@ -14107,58 +14109,8 @@
               "sources": [
                 {
                   "fileName": "webex_adapter.ts",
-                  "line": 458,
+                  "line": 399,
                   "character": 32
-                }
-              ]
-            },
-            {
-              "id": 40,
-              "name": "registerAdaptiveCardWebhookSubscription",
-              "kind": 2048,
-              "kindString": "Method",
-              "flags": {
-                "isPublic": true,
-                "isExported": true,
-                "isExternal": true
-              },
-              "signatures": [
-                {
-                  "id": 41,
-                  "name": "registerAdaptiveCardWebhookSubscription",
-                  "kind": 4096,
-                  "kindString": "Call signature",
-                  "flags": {},
-                  "comment": {
-                    "shortText": "Register a webhook subscription with Webex Teams to start receiving message events."
-                  },
-                  "parameters": [
-                    {
-                      "id": 42,
-                      "name": "webhook_path",
-                      "kind": 32768,
-                      "kindString": "Parameter",
-                      "flags": {},
-                      "comment": {
-                        "text": "the path of the webhook endpoint like `/api/messages`\n"
-                      },
-                      "type": {
-                        "type": "intrinsic",
-                        "name": "any"
-                      }
-                    }
-                  ],
-                  "type": {
-                    "type": "intrinsic",
-                    "name": "void"
-                  }
-                }
-              ],
-              "sources": [
-                {
-                  "fileName": "webex_adapter.ts",
-                  "line": 309,
-                  "character": 50
                 }
               ]
             },
@@ -14253,7 +14205,7 @@
               ]
             },
             {
-              "id": 43,
+              "id": 40,
               "name": "sendActivities",
               "kind": 2048,
               "kindString": "Method",
@@ -14264,7 +14216,7 @@
               },
               "signatures": [
                 {
-                  "id": 44,
+                  "id": 41,
                   "name": "sendActivities",
                   "kind": 4096,
                   "kindString": "Call signature",
@@ -14274,7 +14226,7 @@
                   },
                   "parameters": [
                     {
-                      "id": 45,
+                      "id": 42,
                       "name": "context",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14288,7 +14240,7 @@
                       }
                     },
                     {
-                      "id": 46,
+                      "id": 43,
                       "name": "activities",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14329,7 +14281,7 @@
               "sources": [
                 {
                   "fileName": "webex_adapter.ts",
-                  "line": 364,
+                  "line": 311,
                   "character": 31
                 }
               ]
@@ -14354,15 +14306,14 @@
               "title": "Methods",
               "kind": 2048,
               "children": [
-                55,
-                51,
+                52,
+                48,
                 28,
                 32,
-                62,
-                40,
+                59,
                 37,
                 35,
-                43
+                40
               ]
             }
           ],
@@ -14420,7 +14371,7 @@
           ],
           "methods": [
             {
-              "id": 55,
+              "id": 52,
               "name": "continueConversation",
               "kind": 2048,
               "kindString": "Method",
@@ -14431,7 +14382,7 @@
               },
               "signatures": [
                 {
-                  "id": 56,
+                  "id": 53,
                   "name": "continueConversation",
                   "kind": 4096,
                   "kindString": "Call signature",
@@ -14441,7 +14392,7 @@
                   },
                   "parameters": [
                     {
-                      "id": 57,
+                      "id": 54,
                       "name": "reference",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14461,7 +14412,7 @@
                       }
                     },
                     {
-                      "id": 58,
+                      "id": 55,
                       "name": "logic",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14472,21 +14423,21 @@
                       "type": {
                         "type": "reflection",
                         "declaration": {
-                          "id": 59,
+                          "id": 56,
                           "name": "__type",
                           "kind": 65536,
                           "kindString": "Type literal",
                           "flags": {},
                           "signatures": [
                             {
-                              "id": 60,
+                              "id": 57,
                               "name": "__call",
                               "kind": 4096,
                               "kindString": "Call signature",
                               "flags": {},
                               "parameters": [
                                 {
-                                  "id": 61,
+                                  "id": 58,
                                   "name": "context",
                                   "kind": 32768,
                                   "kindString": "Parameter",
@@ -14512,7 +14463,7 @@
                           "sources": [
                             {
                               "fileName": "webex_adapter.ts",
-                              "line": 441,
+                              "line": 382,
                               "character": 87
                             }
                           ]
@@ -14535,13 +14486,13 @@
               "sources": [
                 {
                   "fileName": "webex_adapter.ts",
-                  "line": 441,
+                  "line": 382,
                   "character": 37
                 }
               ]
             },
             {
-              "id": 51,
+              "id": 48,
               "name": "deleteActivity",
               "kind": 2048,
               "kindString": "Method",
@@ -14552,7 +14503,7 @@
               },
               "signatures": [
                 {
-                  "id": 52,
+                  "id": 49,
                   "name": "deleteActivity",
                   "kind": 4096,
                   "kindString": "Call signature",
@@ -14562,7 +14513,7 @@
                   },
                   "parameters": [
                     {
-                      "id": 53,
+                      "id": 50,
                       "name": "context",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14576,7 +14527,7 @@
                       }
                     },
                     {
-                      "id": 54,
+                      "id": 51,
                       "name": "reference",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14611,7 +14562,7 @@
               "sources": [
                 {
                   "fileName": "webex_adapter.ts",
-                  "line": 423,
+                  "line": 364,
                   "character": 31
                 }
               ]
@@ -14704,7 +14655,7 @@
               ]
             },
             {
-              "id": 62,
+              "id": 59,
               "name": "processActivity",
               "kind": 2048,
               "kindString": "Method",
@@ -14715,7 +14666,7 @@
               },
               "signatures": [
                 {
-                  "id": 63,
+                  "id": 60,
                   "name": "processActivity",
                   "kind": 4096,
                   "kindString": "Call signature",
@@ -14725,7 +14676,7 @@
                   },
                   "parameters": [
                     {
-                      "id": 64,
+                      "id": 61,
                       "name": "req",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14739,7 +14690,7 @@
                       }
                     },
                     {
-                      "id": 65,
+                      "id": 62,
                       "name": "res",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14753,7 +14704,7 @@
                       }
                     },
                     {
-                      "id": 66,
+                      "id": 63,
                       "name": "logic",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -14764,21 +14715,21 @@
                       "type": {
                         "type": "reflection",
                         "declaration": {
-                          "id": 67,
+                          "id": 64,
                           "name": "__type",
                           "kind": 65536,
                           "kindString": "Type literal",
                           "flags": {},
                           "signatures": [
                             {
-                              "id": 68,
+                              "id": 65,
                               "name": "__call",
                               "kind": 4096,
                               "kindString": "Call signature",
                               "flags": {},
                               "parameters": [
                                 {
-                                  "id": 69,
+                                  "id": 66,
                                   "name": "context",
                                   "kind": 32768,
                                   "kindString": "Parameter",
@@ -14804,7 +14755,7 @@
                           "sources": [
                             {
                               "fileName": "webex_adapter.ts",
-                              "line": 458,
+                              "line": 399,
                               "character": 49
                             }
                           ]
@@ -14827,58 +14778,8 @@
               "sources": [
                 {
                   "fileName": "webex_adapter.ts",
-                  "line": 458,
+                  "line": 399,
                   "character": 32
-                }
-              ]
-            },
-            {
-              "id": 40,
-              "name": "registerAdaptiveCardWebhookSubscription",
-              "kind": 2048,
-              "kindString": "Method",
-              "flags": {
-                "isPublic": true,
-                "isExported": true,
-                "isExternal": true
-              },
-              "signatures": [
-                {
-                  "id": 41,
-                  "name": "registerAdaptiveCardWebhookSubscription",
-                  "kind": 4096,
-                  "kindString": "Call signature",
-                  "flags": {},
-                  "comment": {
-                    "shortText": "Register a webhook subscription with Webex Teams to start receiving message events."
-                  },
-                  "parameters": [
-                    {
-                      "id": 42,
-                      "name": "webhook_path",
-                      "kind": 32768,
-                      "kindString": "Parameter",
-                      "flags": {},
-                      "comment": {
-                        "text": "the path of the webhook endpoint like `/api/messages`\n"
-                      },
-                      "type": {
-                        "type": "intrinsic",
-                        "name": "any"
-                      }
-                    }
-                  ],
-                  "type": {
-                    "type": "intrinsic",
-                    "name": "void"
-                  }
-                }
-              ],
-              "sources": [
-                {
-                  "fileName": "webex_adapter.ts",
-                  "line": 309,
-                  "character": 50
                 }
               ]
             },
@@ -14973,7 +14874,7 @@
               ]
             },
             {
-              "id": 43,
+              "id": 40,
               "name": "sendActivities",
               "kind": 2048,
               "kindString": "Method",
@@ -14984,7 +14885,7 @@
               },
               "signatures": [
                 {
-                  "id": 44,
+                  "id": 41,
                   "name": "sendActivities",
                   "kind": 4096,
                   "kindString": "Call signature",
@@ -14994,7 +14895,7 @@
                   },
                   "parameters": [
                     {
-                      "id": 45,
+                      "id": 42,
                       "name": "context",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -15008,7 +14909,7 @@
                       }
                     },
                     {
-                      "id": 46,
+                      "id": 43,
                       "name": "activities",
                       "kind": 32768,
                       "kindString": "Parameter",
@@ -15049,7 +14950,7 @@
               "sources": [
                 {
                   "fileName": "webex_adapter.ts",
-                  "line": 364,
+                  "line": 311,
                   "character": 31
                 }
               ]
@@ -15137,7 +15038,7 @@
                 "isExternal": true
               },
               "comment": {
-                "shortText": "An instance of the [webex api client](https://www.npmjs.com/package/webex)"
+                "shortText": "An instance of the [webex api client](https://www.npmjs.com/package/ciscospark)"
               },
               "sources": [
                 {
@@ -15148,7 +15049,7 @@
               ],
               "type": {
                 "type": "reference",
-                "name": "Webex"
+                "name": "Ciscospark"
               }
             },
             {
@@ -15385,7 +15286,7 @@
                 "isExternal": true
               },
               "comment": {
-                "shortText": "An instance of the [webex api client](https://www.npmjs.com/package/webex)"
+                "shortText": "An instance of the [webex api client](https://www.npmjs.com/package/ciscospark)"
               },
               "sources": [
                 {
@@ -15396,7 +15297,7 @@
               ],
               "type": {
                 "type": "reference",
-                "name": "Webex"
+                "name": "Ciscospark"
               }
             }
           ],
@@ -22703,7 +22604,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 768,
+                  "line": 746,
                   "character": 6
                 }
               ],
@@ -22723,7 +22624,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 765,
+                  "line": 743,
                   "character": 8
                 }
               ],
@@ -22743,7 +22644,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 766,
+                  "line": 744,
                   "character": 11
                 }
               ],
@@ -22763,7 +22664,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 764,
+                  "line": 742,
                   "character": 8
                 }
               ],
@@ -22783,7 +22684,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 767,
+                  "line": 745,
                   "character": 11
                 }
               ],
@@ -22809,7 +22710,7 @@
           "sources": [
             {
               "fileName": "slack_adapter.ts",
-              "line": 763,
+              "line": 741,
               "character": 24
             }
           ],
@@ -22831,7 +22732,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 768,
+                  "line": 746,
                   "character": 6
                 }
               ],
@@ -22851,7 +22752,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 765,
+                  "line": 743,
                   "character": 8
                 }
               ],
@@ -22871,7 +22772,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 766,
+                  "line": 744,
                   "character": 11
                 }
               ],
@@ -22891,7 +22792,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 764,
+                  "line": 742,
                   "character": 8
                 }
               ],
@@ -22911,7 +22812,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 767,
+                  "line": 745,
                   "character": 11
                 }
               ],
@@ -22942,7 +22843,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 754,
+                  "line": 732,
                   "character": 11
                 }
               ],
@@ -22962,7 +22863,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 756,
+                  "line": 734,
                   "character": 11
                 }
               ],
@@ -22986,7 +22887,7 @@
                       "sources": [
                         {
                           "fileName": "slack_adapter.ts",
-                          "line": 757,
+                          "line": 735,
                           "character": 12
                         }
                       ],
@@ -23008,7 +22909,7 @@
                   "sources": [
                     {
                       "fileName": "slack_adapter.ts",
-                      "line": 756,
+                      "line": 734,
                       "character": 12
                     }
                   ]
@@ -23026,7 +22927,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 755,
+                  "line": 733,
                   "character": 6
                 }
               ],
@@ -23050,7 +22951,7 @@
           "sources": [
             {
               "fileName": "slack_adapter.ts",
-              "line": 753,
+              "line": 731,
               "character": 31
             }
           ],
@@ -23072,7 +22973,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 754,
+                  "line": 732,
                   "character": 11
                 }
               ],
@@ -23092,7 +22993,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 756,
+                  "line": 734,
                   "character": 11
                 }
               ],
@@ -23116,7 +23017,7 @@
                       "sources": [
                         {
                           "fileName": "slack_adapter.ts",
-                          "line": 757,
+                          "line": 735,
                           "character": 12
                         }
                       ],
@@ -23138,7 +23039,7 @@
                   "sources": [
                     {
                       "fileName": "slack_adapter.ts",
-                      "line": 756,
+                      "line": 734,
                       "character": 12
                     }
                   ]
@@ -23156,7 +23057,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 755,
+                  "line": 733,
                   "character": 6
                 }
               ],
@@ -23196,7 +23097,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 714,
+                  "line": 692,
                   "character": 12
                 }
               ],
@@ -23221,7 +23122,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 719,
+                  "line": 697,
                   "character": 12
                 }
               ],
@@ -23246,7 +23147,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 723,
+                  "line": 701,
                   "character": 16
                 }
               ],
@@ -23271,7 +23172,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 710,
+                  "line": 688,
                   "character": 23
                 }
               ],
@@ -23296,7 +23197,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 748,
+                  "line": 726,
                   "character": 21
                 }
               ],
@@ -23321,7 +23222,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 741,
+                  "line": 719,
                   "character": 20
                 }
               ],
@@ -23368,7 +23269,7 @@
                   "sources": [
                     {
                       "fileName": "slack_adapter.ts",
-                      "line": 741,
+                      "line": 719,
                       "character": 22
                     }
                   ]
@@ -23391,7 +23292,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 736,
+                  "line": 714,
                   "character": 19
                 }
               ],
@@ -23438,7 +23339,7 @@
                   "sources": [
                     {
                       "fileName": "slack_adapter.ts",
-                      "line": 736,
+                      "line": 714,
                       "character": 21
                     }
                   ]
@@ -23460,7 +23361,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 731,
+                  "line": 709,
                   "character": 15
                 }
               ],
@@ -23485,7 +23386,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 727,
+                  "line": 705,
                   "character": 10
                 }
               ],
@@ -23513,7 +23414,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 706,
+                  "line": 684,
                   "character": 21
                 }
               ],
@@ -23544,7 +23445,7 @@
           "sources": [
             {
               "fileName": "slack_adapter.ts",
-              "line": 702,
+              "line": 680,
               "character": 36
             }
           ],
@@ -23565,7 +23466,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 714,
+                  "line": 692,
                   "character": 12
                 }
               ],
@@ -23590,7 +23491,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 719,
+                  "line": 697,
                   "character": 12
                 }
               ],
@@ -23615,7 +23516,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 723,
+                  "line": 701,
                   "character": 16
                 }
               ],
@@ -23640,7 +23541,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 710,
+                  "line": 688,
                   "character": 23
                 }
               ],
@@ -23665,7 +23566,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 748,
+                  "line": 726,
                   "character": 21
                 }
               ],
@@ -23690,7 +23591,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 741,
+                  "line": 719,
                   "character": 20
                 }
               ],
@@ -23737,7 +23638,7 @@
                   "sources": [
                     {
                       "fileName": "slack_adapter.ts",
-                      "line": 741,
+                      "line": 719,
                       "character": 22
                     }
                   ]
@@ -23760,7 +23661,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 736,
+                  "line": 714,
                   "character": 19
                 }
               ],
@@ -23807,7 +23708,7 @@
                   "sources": [
                     {
                       "fileName": "slack_adapter.ts",
-                      "line": 736,
+                      "line": 714,
                       "character": 21
                     }
                   ]
@@ -23829,7 +23730,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 731,
+                  "line": 709,
                   "character": 15
                 }
               ],
@@ -23854,7 +23755,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 727,
+                  "line": 705,
                   "character": 10
                 }
               ],
@@ -23882,7 +23783,7 @@
               "sources": [
                 {
                   "fileName": "slack_adapter.ts",
-                  "line": 706,
+                  "line": 684,
                   "character": 21
                 }
               ],

@@ -3,7 +3,7 @@
  */
 
 import { Botkit, BotkitMessage, BotWorker } from 'botkit';
-import { WebClient, Dialog } from '@slack/web-api';
+import { WebClient, Dialog } from '@slack/client';
 import * as request from 'request';
 
 /**

@@ -352,7 +352,7 @@ export class FacebookAdapter extends BotAdapter {
 
                     // handle standby messages (this bot is not the active receiver)
                     if (entry.standby) {
-                        payload = entry.standby;
+                        payload = entry.standyby;
 
                         for (let m = 0; m < payload.length; m++) {
                             let message = payload[m];
