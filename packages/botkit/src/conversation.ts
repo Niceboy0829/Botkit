@@ -664,7 +664,7 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
             // This could be extended to include cards and other activity attributes.
             } else {
                 // if there is text, attachments, or any channel data fields at all...
-                if (line.type || line.text || line.attachments || line.attachment || (line.channelData && Object.keys(line.channelData).length)) {
+                if (line.type || line.text || line.attachments || line.attachment || line.blocks ||  (line.channelData && Object.keys(line.channelData).length)) {
                     await dc.context.sendActivity(await this.makeOutgoing(dc, line, step.values));
                 } else if (!line.action) {
                     console.error('Dialog contains invalid message', line);
@@ -762,15 +762,14 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
         let outgoing;
         let text = '';
 
-        // If text is a function, call the function to get the actual text value.
-        if (typeof line.text === 'function') {
-            text = await line.text(vars);
-        }
 
         // if the text is just a string, use it.
         // otherwise, if it is an array, pick a random element
-        if (line.text && typeof(line.text)=='string') {
+        if (line.text && typeof(line.text) === 'string') {
             text = line.text;
+        // If text is a function, call the function to get the actual text value.
+        } else if (line.text && typeof(line.text) === 'function') {
+            text = await line.text(line, vars);
         } else if (Array.isArray(line.text)) {
             text = line.text[Math.floor(Math.random() * line.text.length)];
         }
