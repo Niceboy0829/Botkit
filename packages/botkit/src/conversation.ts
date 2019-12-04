@@ -803,9 +803,7 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
         }
 
         outgoing.channelData = outgoing.channelData ? outgoing.channelData : {};
-        if (line.attachmentLayout) {
-                outgoing.attachmentLayout = line.attachmentLayout;
-        }
+
         /*******************************************************************************************************************/
         // allow dynamic generation of quick replies and/or attachments
         if (typeof(line.quick_replies)=='function') {
