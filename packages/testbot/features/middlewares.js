@@ -10,9 +10,4 @@ module.exports = function(controller) {
         next();
     });
 
-    controller.middleware.ingest.use(async (bot, message, next) => {
-        message.touchedbyMiddleware = true;
-        next();
-    });
-
 }
