@@ -458,8 +458,7 @@ for handling platform-specific events or activities.
 
 | Argument | Type | description
 |--- |--- |---
-| config (optional)| any | Preferably receives a DialogContext, though can also receive a TurnContext. If excluded, must call `bot.changeContext(reference)` before calling any other method.
-| custom_adapter (optional)| BotAdapter | 
+| config (optional)| any | Preferably receives a DialogContext, though can also receive a TurnContext. If excluded, must call `bot.changeContext(reference)` before calling any other method.<br/>
 
 
 
@@ -1100,7 +1099,7 @@ handler marked as the default choice.
 [Learn more about building conversations &rarr;](../conversations.md#build-a-conversation)
 ```javascript
 // ask a question, handle the response with a function
-convo.ask('What is your name?', async(response, convo, bot, full_message) => {
+convo.ask('What is your name?', async(response, convo, bot) => {
  await bot.say('Oh your name is ' + response);
 }, {key: 'name'});
 
@@ -1109,20 +1108,20 @@ convo.ask('Do you want to eat a taco?', [
  {
      pattern: 'yes',
      type: 'string',
-     handler: async(response_text, convo, bot, full_message) => {
+     handler: async(response, convo, bot) => {
          return await convo.gotoThread('yes_taco');
      }
  },
  {
      pattern: 'no',
      type: 'string',
-     handler: async(response_text, convo, bot, full_message) => {
+     handler: async(response, convo, bot) => {
          return await convo.gotoThread('no_taco');
      }
   },s
   {
       default: true,
-      handler: async(response_text, convo, bot, full_message) => {
+      handler: async(response, convo, bot) => {
           await bot.say('I do not understand your response!');
           // start over!
           return await convo.repeat();
