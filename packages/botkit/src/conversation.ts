@@ -325,7 +325,7 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
      *      handler: async(response_text, convo, bot, full_message) => {
      *          return await convo.gotoThread('no_taco');
      *      }
-     *   },s
+     *   },
      *   {
      *       default: true,
      *       handler: async(response_text, convo, bot, full_message) => {
@@ -393,6 +393,9 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
         message.collect.options.forEach((o) => { if (!o.type) { o.type = 'string'; } });
 
         this.script[thread_name].push(message);
+
+        // add a null message where the handlers for the previous message will fire.
+        this.script[thread_name].push({ action: 'next' });
 
         return this;
     }
@@ -653,7 +656,6 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
                     }
 
                     const res = await this.handleAction(path, dc, step);
-
                     if (res !== false) {
                         return res;
                     }
@@ -691,6 +693,7 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
                 }
 
                 if (line.action) {
+
                     const res = await this.handleAction(line, dc, step);
                     if (res !== false) {
                         return res;
@@ -734,7 +737,6 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
                 if (nextCalled) {
                     throw new Error(`ScriptedStepContext.next(): method already called for dialog and step '${ this.id }[${ index }]'.`);
                 }
-
                 return await this.resumeDialog(dc, DialogReason.nextCalled, stepResult);
             }
         };
@@ -968,11 +970,19 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
             // create a convo controller object
             const convo = new BotkitDialogWrapper(dc, step);
 
+            const activedialog = dc.activeDialog.id;
+
             await path.handler.call(this, response, convo, bot, dc.context.turnState.get('botkitMessage') || dc.context.activity);
 
             if (!dc.activeDialog) {
                 return false;
             }
+
+            // did we change dialogs? if so, return an endofturn because the new dialog has taken over.
+            if (activedialog !== dc.activeDialog.id) {
+                return Dialog.EndOfTurn;
+            }
+
             // did we just change threads? if so, restart this turn
             if (index !== step.index || thread_name !== step.thread) {
                 return await this.runStep(dc, step.index, step.thread, DialogReason.nextCalled, null);
