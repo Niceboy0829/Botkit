@@ -340,6 +340,9 @@ export class SlackAdapter extends BotAdapter {
             message.user = activity.recipient.id;
         }
 
+        if (message.icon_url || message.icon_emoji || message.username) {
+            message.as_user = false;
+        }
 
         return message;
     }
