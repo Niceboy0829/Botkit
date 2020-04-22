@@ -344,11 +344,6 @@ export class SlackAdapter extends BotAdapter {
             message.as_user = false;
         }
 
-        // as_user flag is deprecated on v2
-        if (message.as_user === false && this.options.oauthVersion === 'v2') {
-            delete message.as_user;
-        }
-
         return message;
     }
 
