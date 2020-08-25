@@ -693,7 +693,6 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
                 }
 
                 if (line.action) {
-
                     const res = await this.handleAction(line, dc, step);
                     if (res !== false) {
                         return res;
@@ -859,7 +858,7 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
         // copy all the values in channelData fields
         if (line.channelData && Object.keys(line.channelData).length > 0) {
             const channelDataParsed = this.parseTemplatesRecursive(JSON.parse(JSON.stringify(line.channelData)), vars);
-            
+
             outgoing.channelData = {
                 ...outgoing.channelData,
                 ...channelDataParsed
@@ -967,7 +966,7 @@ export class BotkitConversation<O extends object = {}> extends Dialog<O> {
             const index = step.index;
             const thread_name = step.thread;
             const result = step.result;
-            const response = result.text || (typeof (result) === 'string' ? result : null);
+            const response = result == null ? null : (result.text || (typeof (result) === 'string' ? result : null));
 
             // spawn a bot instance so devs can use API or other stuff as necessary
             const bot = await this._controller.spawn(dc);
