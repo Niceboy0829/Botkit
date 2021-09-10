@@ -540,7 +540,7 @@ export class SlackAdapter extends BotAdapter {
                         thread_ts: event.thread_ts,
                         team: event.team.id
                     },
-                    from: { id: event.user.id ?? event.bot_id },
+                    from: { id: event.bot_id ? event.bot_id : event.user.id },
                     recipient: { id: null },
                     channelData: event,
                     type: ActivityTypes.Event,
