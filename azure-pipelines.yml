@@ -12,8 +12,7 @@ pool:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '14.x'
-    checkLatest: true
+    versionSpec: '10.x'
   displayName: 'Install Node.js'
 
 - script: |
@@ -24,6 +23,6 @@ steps:
 
 - task: ComponentGovernanceComponentDetection@0
   inputs:
-    scanType: 'Register'
+    scanType: 'LogOnly'
     verbosity: 'Verbose'
     alertWarningLevel: 'High'
