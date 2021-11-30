@@ -94,7 +94,6 @@ export class BotkitTestClient {
      * ```
      */
     public async sendActivity(activity: Partial<Activity> | string): Promise<any> {
-        if (!activity) { activity = { type: 'event' }}
         await this._testAdapter.receiveActivity(activity);
         return this._testAdapter.activityBuffer.shift();
     }

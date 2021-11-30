@@ -15,7 +15,6 @@ describe('Botkit dialog', function() {
     it('should follow a dialog', async function() {
         const introDialog = new BotkitConversation('introduction', bot);
         introDialog.ask({
-            type: 'message',
             text: 'You can say Ok',
             quick_replies: [{
                 title: 'Ok',
@@ -24,7 +23,6 @@ describe('Botkit dialog', function() {
         }, [], 'continue');
         introDialog.say('you said {{vars.continue}}');
         introDialog.ask({
-            type: 'message',
             text: 'say repeat'
         }, [{
             pattern: 'repeat',
